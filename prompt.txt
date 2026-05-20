@@ -1,0 +1,1 @@
+"I have established a project specification template in README.md. Read and analyze every section within this document. Before generating any codebase files, backend server logic, API endpoints, or user interfaces, you must confirm that your technical choices fully conform to the infrastructure, security, and performance limits defined in the file."

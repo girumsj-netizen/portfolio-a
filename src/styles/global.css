@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  color: #f8fafc;
+  background-color: #09090b;
+  --surface-background: #09090b;
+  --surface-muted: #0f1112;
+  --surface-emphasis: #141417;
+  --surface-border: rgba(255, 255, 255, 0.04);
+  --accent: #00b37e;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  background: #09090b;
+  color: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+*::selection {
+  background: rgba(0, 179, 126, 0.22);
+  color: #ffffff;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+.device-screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(3, 12, 16, 0.95), rgba(1, 5, 9, 0.95));
+}
+
+.device-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 25%);
+}
+
+.showcase-hero {
+  background: #080c13;
+  border-radius: 2rem;
+  padding: 3rem 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .showcase-hero {
+    padding: 4rem 2rem;
+  }
+}
+
+.showcase-hero .hero-copy {
+  max-width: 52rem;
+}
+
+.showcase-hero .model-container {
+  min-height: 560px;
+  border-radius: 2rem;
+  overflow: hidden;
+  background: #09131c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+}
+
+.model-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 1023px) {
+  .showcase-hero {
+    border-radius: 1.75rem;
+    padding: 2rem 1rem;
+  }
+  .showcase-hero .model-container {
+    min-height: 420px;
+  }
+}
+
+/* subtle background grid for the hero area */
+.bg-grid {
+  background-image: linear-gradient(rgba(0,0,0,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.18) 1px, transparent 1px);
+  background-size: 28px 28px, 28px 28px;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+::placeholder {
+  color: #8b8f98;
+}

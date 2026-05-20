@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="Tablet and phone mockup with green gradient">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#003826" />
+      <stop offset="100%" stop-color="#006b42" />
+    </linearGradient>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="28" result="blur" />
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1600" height="1000" fill="#04120b" />
+  <g opacity="0.18" filter="url(#softGlow)">
+    <circle cx="420" cy="280" r="260" fill="url(#g1)" />
+    <circle cx="1230" cy="720" r="180" fill="#063b2a" />
+  </g>
+  <!-- subtle grid lines -->
+  <g opacity="0.06" stroke="#0b2b1f" stroke-width="1">
+    <!-- horizontal lines -->
+    <path d="M0 0 H1600" transform="translate(0,40)"/>
+    <path d="M0 0 H1600" transform="translate(0,68)"/>
+  </g>
+
+  <!-- Tablet mockup -->
+  <g transform="translate(120,200)">
+    <rect x="0" y="0" width="980" height="560" rx="28" fill="#07110e" stroke="#0f251e" stroke-width="2" />
+    <rect x="18" y="18" width="944" height="524" rx="18" fill="#061412" />
+    <!-- sample content inside tablet -->
+    <rect x="46" y="46" width="420" height="40" rx="8" fill="#0b2b1f" />
+    <rect x="46" y="100" width="780" height="26" rx="10" fill="#07221b" />
+    <rect x="46" y="140" width="640" height="18" rx="9" fill="#07221b" />
+    <rect x="46" y="188" width="860" height="220" rx="16" fill="#042117" />
+    <rect x="64" y="206" width="220" height="18" rx="9" fill="#06422d" />
+  </g>
+
+  <!-- Phone mockup -->
+  <g transform="translate(1160,340)">
+    <rect x="0" y="0" width="260" height="480" rx="28" fill="#07110e" stroke="#0f251e" stroke-width="2" />
+    <rect x="12" y="12" width="236" height="456" rx="16" fill="#04120b" />
+    <rect x="28" y="40" width="200" height="26" rx="8" fill="#063b2a" />
+    <rect x="28" y="80" width="200" height="18" rx="8" fill="#08271d" />
+    <rect x="28" y="120" width="200" height="260" rx="12" fill="#042117" />
+  </g>
+
+  <!-- small accent ribbon -->
+  <g transform="translate(120,780)">
+    <rect x="0" y="0" width="360" height="84" rx="20" fill="#001a12" stroke="#08321f" />
+    <text x="28" y="52" fill="#9feccf" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">ZeBeyond — SaaS Website</text>
+  </g>
+</svg>
