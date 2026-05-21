@@ -239,6 +239,10 @@ const canonical = 'https://yourdomain.com';
     });
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
 
     const makeScreenTexture = (source: HTMLImageElement) => {
@@ -277,22 +281,28 @@ const canonical = 'https://yourdomain.com';
 
     const screenImage = new Image();
     screenImage.src = '/assets/pictures/novaflow-screen.png';
+    const screenVideo = document.createElement('video');
+    screenVideo.src = '/assets/videos/novaflow-scroll.webm';
+    screenVideo.muted = true;
+    screenVideo.loop = true;
+    screenVideo.playsInline = true;
+    screenVideo.preload = 'auto';
     const screenMaterial = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       side: THREE.DoubleSide,
       toneMapped: false
     });
     const bodyMaterial = new THREE.MeshStandardMaterial({
-      color: 0x111417,
-      metalness: 0.85,
-      roughness: 0.28,
-      envMapIntensity: 0.7
+      color: 0x191d20,
+      metalness: 0.92,
+      roughness: 0.24,
+      envMapIntensity: 0.9
     });
     const backMaterial = new THREE.MeshStandardMaterial({
-      color: 0x07090c,
-      metalness: 0.55,
-      roughness: 0.42,
-      envMapIntensity: 0.45
+      color: 0x101316,
+      metalness: 0.72,
+      roughness: 0.34,
+      envMapIntensity: 0.72
     });
     const blackGlassMaterial = new THREE.MeshBasicMaterial({
       color: 0x020305,
@@ -300,19 +310,70 @@ const canonical = 'https://yourdomain.com';
       toneMapped: false
     });
 
+    let videoTexture: THREE.VideoTexture | null = null;
+
     screenImage.addEventListener('load', () => {
-      screenMaterial.map = makeScreenTexture(screenImage);
+      if (videoTexture) {
+        return;
+      }
+
+      const fallbackTexture = makeScreenTexture(screenImage);
+      screenMaterial.map?.dispose();
+      screenMaterial.map = fallbackTexture;
       screenMaterial.needsUpdate = true;
     });
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
-    keyLight.position.set(3.5, 4, 5);
-    scene.add(keyLight);
-    scene.add(new THREE.HemisphereLight(0xb9fff1, 0x0a1020, 2.2));
+    const applyVideoTexture = () => {
+      videoTexture = new THREE.VideoTexture(screenVideo);
+      videoTexture.colorSpace = THREE.SRGBColorSpace;
+      videoTexture.flipY = false;
+      videoTexture.minFilter = THREE.LinearFilter;
+      videoTexture.magFilter = THREE.LinearFilter;
+      videoTexture.generateMipmaps = false;
+      videoTexture.wrapS = THREE.RepeatWrapping;
+      videoTexture.center.set(0.5, 0.5);
+      videoTexture.rotation = Math.PI;
+      videoTexture.repeat.x = -1;
+      videoTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-    const fillLight = new THREE.PointLight(0x00b37e, 18, 12);
-    fillLight.position.set(-3, 1.5, 3);
+      screenMaterial.map?.dispose();
+      screenMaterial.map = videoTexture;
+      screenMaterial.needsUpdate = true;
+    };
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 4.4);
+    keyLight.position.set(4.5, 5.5, 6);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(1024, 1024);
+    keyLight.shadow.camera.near = 0.5;
+    keyLight.shadow.camera.far = 18;
+    keyLight.shadow.camera.left = -5;
+    keyLight.shadow.camera.right = 5;
+    keyLight.shadow.camera.top = 5;
+    keyLight.shadow.camera.bottom = -5;
+    scene.add(keyLight);
+    scene.add(new THREE.HemisphereLight(0xb9fff1, 0x05070d, 1.35));
+
+    const fillLight = new THREE.PointLight(0x00b37e, 10, 12);
+    fillLight.position.set(-3.2, 1.2, 3.4);
     scene.add(fillLight);
+
+    const rimLight = new THREE.PointLight(0x9af7ff, 32, 9);
+    rimLight.position.set(-3.8, 2.7, -2.5);
+    scene.add(rimLight);
+
+    const edgeLight = new THREE.DirectionalLight(0xdff7ff, 1.45);
+    edgeLight.position.set(-2, 3, 3.5);
+    scene.add(edgeLight);
+
+    const shadowPlane = new THREE.Mesh(
+      new THREE.CircleGeometry(2.25, 48),
+      new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.24 })
+    );
+    shadowPlane.position.set(0, -1.68, -0.55);
+    shadowPlane.scale.set(1.25, 0.22, 1);
+    shadowPlane.receiveShadow = true;
+    scene.add(shadowPlane);
 
     const phoneGroup = new THREE.Group();
     phoneGroup.rotation.set(-0.08, -0.35, 0.03);
@@ -323,6 +384,32 @@ const canonical = 'https://yourdomain.com';
     let animationFrame = 0;
     let pointerX = 0;
     let pointerY = 0;
+    let isAnimating = false;
+    let isSceneVisible = true;
+    let isPageVisible = !document.hidden;
+
+    const shouldAnimate = () => isSceneVisible && isPageVisible;
+
+    const syncVideoPlayback = () => {
+      if (!videoTexture) {
+        return;
+      }
+
+      if (shouldAnimate()) {
+        void screenVideo.play().catch(() => undefined);
+      } else {
+        screenVideo.pause();
+      }
+    };
+
+    const stopFrame = () => {
+      if (!isAnimating) {
+        return;
+      }
+
+      window.cancelAnimationFrame(animationFrame);
+      isAnimating = false;
+    };
 
     const resize = () => {
       const { width, height } = root.getBoundingClientRect();
@@ -333,6 +420,11 @@ const canonical = 'https://yourdomain.com';
     };
 
     const frame = () => {
+      if (!shouldAnimate()) {
+        isAnimating = false;
+        return;
+      }
+
       animationFrame = window.requestAnimationFrame(frame);
       const time = performance.now() * 0.001;
 
@@ -342,6 +434,22 @@ const canonical = 'https://yourdomain.com';
 
       renderer.render(scene, camera);
     };
+
+    const startFrame = () => {
+      if (isAnimating || !shouldAnimate()) {
+        return;
+      }
+
+      isAnimating = true;
+      animationFrame = window.requestAnimationFrame(frame);
+    };
+
+    screenVideo.addEventListener('loadeddata', () => {
+      applyVideoTexture();
+      syncVideoPlayback();
+    }, { once: true });
+
+    screenVideo.load();
 
     root.addEventListener('pointermove', (event) => {
       const rect = root.getBoundingClientRect();
@@ -366,31 +474,44 @@ const canonical = 'https://yourdomain.com';
 
           const meshCandidate = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
           const meshName = object.name.toLowerCase();
+          const parentName = object.parent?.name.toLowerCase() ?? '';
+          const normalizedName = meshName.replace(/[\s-]+/g, '_');
+          const normalizedParentName = parentName.replace(/[\s-]+/g, '_');
 
           if (meshCandidate.isMesh && meshName === 'screen') {
+            meshCandidate.castShadow = false;
+            meshCandidate.receiveShadow = false;
             meshCandidate.material = screenMaterial;
+            return;
           }
 
           if (
             meshCandidate.isMesh &&
-            ['metal border', 'body-screen', 'button'].includes(meshName)
+            (
+              normalizedName === 'screen_border' ||
+              normalizedParentName.includes('dynamic_island') ||
+              normalizedParentName.includes('camera') ||
+              normalizedParentName.includes('cam') ||
+              normalizedName.includes('cam')
+            )
           ) {
-            meshCandidate.material = bodyMaterial;
+            meshCandidate.castShadow = true;
+            meshCandidate.receiveShadow = true;
+            meshCandidate.material = blackGlassMaterial;
+            return;
           }
 
-          if (meshCandidate.isMesh && meshName === 'back side') {
+          if (meshCandidate.isMesh && normalizedName === 'back_side') {
+            meshCandidate.castShadow = true;
+            meshCandidate.receiveShadow = true;
             meshCandidate.material = backMaterial;
+            return;
           }
 
-          if (meshCandidate.isMesh && meshName === 'screen border') {
-            meshCandidate.material = blackGlassMaterial;
-          }
-
-          if (
-            meshCandidate.isMesh &&
-            ['rectangle', 'rectangle_5', 'ellipse', 'ellipse_2'].includes(meshName)
-          ) {
-            meshCandidate.material = blackGlassMaterial;
+          if (meshCandidate.isMesh) {
+            meshCandidate.castShadow = true;
+            meshCandidate.receiveShadow = true;
+            meshCandidate.material = bodyMaterial;
           }
         });
 
@@ -424,14 +545,45 @@ const canonical = 'https://yourdomain.com';
     );
 
     resize();
-    frame();
+    startFrame();
 
     const observer = new ResizeObserver(resize);
     observer.observe(root);
 
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      isSceneVisible = entry.isIntersecting;
+
+      if (shouldAnimate()) {
+        startFrame();
+      } else {
+        stopFrame();
+      }
+
+      syncVideoPlayback();
+    }, { threshold: 0.05 });
+    visibilityObserver.observe(root);
+
+    const handleVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+
+      if (shouldAnimate()) {
+        startFrame();
+      } else {
+        stopFrame();
+      }
+
+      syncVideoPlayback();
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     document.addEventListener('astro:before-swap', () => {
-      window.cancelAnimationFrame(animationFrame);
+      stopFrame();
       observer.disconnect();
+      visibilityObserver.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      screenVideo.pause();
+      screenMaterial.map?.dispose();
+      videoTexture?.dispose();
       renderer.dispose();
     }, { once: true });
   });

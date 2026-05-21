@@ -25,6 +25,15 @@ body {
   color: #f8fafc;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .ambient-particles span {
+    animation:
+      particle-drift var(--t) ease-in-out infinite,
+      particle-flash calc(var(--t) * 0.62) steps(1, end) infinite;
+    animation-delay: var(--d);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -38,6 +47,97 @@ img,
 svg {
   display: block;
   max-width: 100%;
+}
+
+.ambient-particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint;
+}
+
+.ambient-particles span {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: calc(2px * var(--s));
+  height: calc(2px * var(--s));
+  border-radius: 999px;
+  background: rgba(44, 255, 188, 0.68);
+  box-shadow:
+    0 0 12px rgba(0, 179, 126, 0.5),
+    0 0 26px rgba(0, 255, 180, 0.14),
+    18px 24px 0 -1px rgba(0, 179, 126, 0.22),
+    -22px 42px 0 -1px rgba(154, 247, 255, 0.16);
+  opacity: 0.68;
+  transform: translate3d(0, 0, 0);
+  will-change: filter, opacity, transform;
+}
+
+.ambient-particles span::before,
+.ambient-particles span::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(28px * var(--s));
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 180, 0.5), transparent);
+  opacity: 0.5;
+  transform: translate(-50%, -50%) rotate(18deg);
+}
+
+.ambient-particles span::after {
+  width: calc(14px * var(--s));
+  background: linear-gradient(90deg, transparent, rgba(154, 247, 255, 0.36), transparent);
+  transform: translate(-50%, -50%) rotate(-72deg);
+}
+
+.ambient-particles .particle-dense {
+  background: rgba(89, 255, 202, 0.82);
+  box-shadow:
+    0 0 14px rgba(0, 255, 180, 0.58),
+    0 0 34px rgba(0, 179, 126, 0.2),
+    15px 18px 0 -1px rgba(0, 179, 126, 0.32),
+    -18px 30px 0 -1px rgba(154, 247, 255, 0.2),
+    26px -14px 0 -1px rgba(0, 255, 180, 0.2);
+}
+
+@keyframes particle-drift {
+  0%,
+  100% {
+    opacity: 0.22;
+    transform: translate3d(0, 0, 0);
+  }
+
+  45% {
+    opacity: 0.82;
+    transform: translate3d(var(--dx), var(--dy), 0);
+  }
+
+  70% {
+    opacity: 0.48;
+    transform: translate3d(calc(var(--dx) * -0.45), calc(var(--dy) * 1.25), 0);
+  }
+}
+
+@keyframes particle-flash {
+  0%,
+  64%,
+  100% {
+    filter: brightness(1);
+  }
+
+  65%,
+  68% {
+    filter: brightness(2.4);
+  }
+
+  72% {
+    filter: brightness(0.75);
+  }
 }
 
 .device-screen {
@@ -104,7 +204,24 @@ svg {
   min-height: 100%;
 }
 
+.iphone-scene::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(72%, 28rem);
+  aspect-ratio: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, rgba(0, 179, 126, 0.22), transparent 56%),
+    radial-gradient(circle, rgba(154, 247, 255, 0.15), transparent 68%);
+  filter: blur(14px);
+  transform: translate(-48%, -44%);
+}
+
 .iphone-scene canvas {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
@@ -401,6 +518,43 @@ svg {
 .bg-grid {
   background-image: linear-gradient(rgba(0,0,0,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.18) 1px, transparent 1px);
   background-size: 28px 28px, 28px 28px;
+}
+
+.digital-footer {
+  position: relative;
+  overflow: hidden;
+  contain: paint;
+}
+
+.digital-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 179, 126, 0.12) 1px, transparent 1px),
+    linear-gradient(rgba(0, 179, 126, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, transparent, rgba(0, 179, 126, 0.08), transparent);
+  background-size: 42px 42px, 42px 42px, 100% 100%;
+  mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+  opacity: 0.58;
+}
+
+.digital-footer::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 180, 0.8), transparent);
+  box-shadow: 0 0 18px rgba(0, 179, 126, 0.35);
+}
+
+.digital-footer > div {
+  position: relative;
+  z-index: 1;
 }
 
 button,
