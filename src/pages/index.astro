@@ -1,25 +1,24 @@
----
+﻿---
 import Layout from '../layouts/Layout.astro';
-// Place future 3D asset files (.glb, .gltf, .usdz) under /assets/models/
 const canonical = 'https://yourdomain.com';
 ---
-<Layout title="Ultra-Fast B2B Portfolio Websites for Premium Clients" description="High-converting portfolio websites built for B2B leaders who want performance, security, and measurable growth." canonical={canonical}>
-  <section id="hero" class="showcase-hero pb-20 pt-12">
-    <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+<Layout title="Fast Portfolio Websites for Growing Brands" description="Clear fast websites for business owners who want more trust and better leads." canonical={canonical}>
+  <section id="hero" class="showcase-hero pb-16 pt-10">
+    <div class="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
       <div class="hero-copy">
-        <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[01 / ARCHITECTURE]</p>
-        <h1 class="mt-6 max-w-3xl text-5xl font-semibold tracking-tight leading-[1.02] text-white sm:text-6xl lg:text-7xl">I build ultra-fast, high-converting websites for ambitious B2B leaders that turn casual visitors into qualified sales conversations.</h1>
-        <p class="mt-6 max-w-2xl text-lg tracking-tight text-zinc-300">A premium productized website experience designed to remove friction, improve trust, and accelerate revenue for service brands, SaaS operators, and executive teams.</p>
-        <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+        <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[01 / WEBSITE BUILD]</p>
+        <h1 class="mt-5 max-w-3xl text-5xl font-semibold tracking-tight leading-[1.02] text-white sm:text-6xl lg:text-6xl xl:text-[4.35rem]">I build fast websites that help good businesses look trusted and get better leads.</h1>
+        <p class="mt-5 max-w-2xl text-lg tracking-tight text-zinc-300">Your site should load fast and explain your offer clearly. I design and build clean pages that make it easy for people to contact you.</p>
+        <div class="mt-8 flex flex-col gap-4 sm:flex-row">
           <a href="#audit" class="inline-flex items-center justify-center rounded-full bg-accent px-8 py-4 text-base font-semibold text-black shadow-[0_0_0_rgba(0,179,126,0.35)] transition-all duration-300 ease-out hover:shadow-[0_0_40px_rgba(0,179,126,0.28)]">Get a Free 3-Minute Web Audit</a>
-          <a href="#services" class="inline-flex items-center justify-center rounded-full border border-zinc-700 bg-[#111113] px-8 py-4 text-base font-semibold text-zinc-200 transition-all duration-300 ease-out hover:border-zinc-600 hover:text-white">See Services & Pricing</a>
+          <a href="#services" class="inline-flex items-center justify-center rounded-full border border-zinc-700 bg-[#111113] px-8 py-4 text-base font-semibold text-zinc-200 transition-all duration-300 ease-out hover:border-zinc-600 hover:text-white">See Services and Pricing</a>
         </div>
 
-        <div class="mt-12 max-w-xl rounded-[2rem] border border-zinc-800/60 bg-[#141417] p-6 shadow-soft">
+        <div class="mt-8 max-w-xl rounded-[2rem] border border-zinc-800/60 bg-[#141417] p-5 shadow-soft">
           <article class="grid gap-4">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <span class="rounded-full bg-accent/10 px-3 py-1 text-xs uppercase tracking-[0.32em] text-accent">Performance</span>
-              <p class="text-sm text-zinc-400">Strategic speed, security, and SEO built to convert at every stage of the funnel.</p>
+              <p class="text-sm text-zinc-400">Fast pages with clear structure and search basics built in.</p>
             </div>
             <div class="grid gap-4 sm:grid-cols-3">
               <div class="rounded-3xl bg-[#0f0f12] p-5 text-center">
@@ -32,36 +31,49 @@ const canonical = 'https://yourdomain.com';
               </div>
               <div class="rounded-3xl bg-[#0f0f12] p-5 text-center">
                 <span class="block text-sm uppercase tracking-[0.28em] text-zinc-500">SEO</span>
-                <strong class="mt-3 block text-3xl font-semibold text-white">B2B-ready</strong>
+                <strong class="mt-3 block text-3xl font-semibold text-white">Ready</strong>
               </div>
             </div>
           </article>
         </div>
       </div>
 
-      <div class="model-container">
-        <canvas id="iphone-model-canvas" class="model-canvas" aria-label="3D iPhone model viewer"></canvas>
+      <div class="hero-visual" aria-label="Interactive 3D iPhone portfolio preview">
+        <div class="iphone-scene" data-iphone-scene data-model-src="/assets/models/iphone.gltf">
+          <canvas aria-hidden="true"></canvas>
+          <div class="iphone-fallback">
+            <div class="fallback-phone">
+              <span></span>
+              <strong>1.8s</strong>
+              <p>Fast clear and ready.</p>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual-caption">
+          <span>Interactive device preview</span>
+          <strong>Built for mobile buyers</strong>
+        </div>
       </div>
     </div>
   </section>
 
   <section id="work" class="space-y-12 pb-20">
     <div class="space-y-4">
-      <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[02 / PROBLEM SOLUTION]</p>
-      <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Slow, insecure, and generic websites cost your business credibility, leads, and search momentum.</h2>
-      <p class="max-w-3xl text-base leading-8 text-zinc-400">Most agencies focus on visuals alone. I build a polished digital engine with semantic markup, hardened security, and rapid load performance so your brand earns trust instantly and performs reliably under demand.</p>
+      <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[02 / THE PROBLEM]</p>
+      <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">A slow or confusing website makes people leave before they trust you.</h2>
+      <p class="max-w-3xl text-base leading-8 text-zinc-400">Many sites look nice but they do not explain the offer well. I build pages that feel professional and help visitors know what to do next.</p>
     </div>
 
     <div class="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
       <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-8 transition-all duration-300 hover:border-zinc-700/80">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">Problem</p>
-        <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Design without architecture leaves revenue on the table.</h3>
-        <p class="mt-4 text-zinc-400">When a website loads slowly or uses weak markup, visitors abandon before they learn your value. This creates friction, reduces conversions, and weakens the SEO signals that high-value B2B buyers use to evaluate trust.</p>
+        <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">A pretty site is not enough.</h3>
+        <p class="mt-4 text-zinc-400">If your site is slow or unclear then visitors may leave before they understand your value. That means fewer calls and fewer strong leads.</p>
       </article>
       <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-8 transition-all duration-300 hover:border-zinc-700/80">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">Solution</p>
-        <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">A performance-first foundation built for modern enterprise demand.</h3>
-        <p class="mt-4 text-zinc-400">I deliver fully semantic pages, accessible interactions, and secure architecture using Astro and Tailwind. Every section is optimized for speed, clarity, and conversion — so visitors become qualified prospects faster.</p>
+        <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">A clear site makes the next step easy.</h3>
+        <p class="mt-4 text-zinc-400">I build clean pages with fast loading and simple sections. Each part helps people understand your service and reach out with confidence.</p>
       </article>
     </div>
   </section>
@@ -69,50 +81,52 @@ const canonical = 'https://yourdomain.com';
   <section class="space-y-10 pb-20">
     <div class="space-y-4">
       <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[03 / CASE STUDIES]</p>
-      <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Deep-dive case studies designed for business impact.</h2>
-      <p class="max-w-3xl text-base leading-8 text-zinc-400">Each project is structured around the challenge, the engineering solution, and the measurable business result — not just aesthetics.</p>
+      <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Recent website work with a clear business goal.</h2>
+      <p class="max-w-3xl text-base leading-8 text-zinc-400">Each project shows the problem and the result in simple terms. The goal is always a site that is easy to use and easy to trust.</p>
     </div>
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
       <article class="md:col-span-2 rounded-2xl bg-[#141417] border border-zinc-800/60 p-8 transition-all duration-300 hover:border-zinc-700/80">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">Project Showcase</p>
-        <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Nova Flow — Desktop and mobile dashboard preview.</h3>
+        <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Nova Flow desktop and mobile preview.</h3>
         <div class="mt-6 space-y-4 text-zinc-400">
           <div>
             <p class="font-semibold text-white">The UI</p>
-            <p>High-contrast analytics and data workflow screens presented inside premium frames for desktop and mobile audiences.</p>
+            <p>Clean dashboard screens shown on desktop and mobile.</p>
           </div>
           <div>
             <p class="font-semibold text-white">The experience</p>
-            <p>Interactive mockup loaded directly from the Nova Flow prototype with clean geometry, subtle neon accents, and performance-safe rendering.</p>
+            <p>A sharp preview that feels modern and loads smoothly.</p>
           </div>
           <div>
             <p class="font-semibold text-white">Why it matters</p>
-            <p>This project demonstrates polished product UX, real UI fidelity, and an enterprise-ready presentation format for premium B2B audiences.</p>
+            <p>It helps buyers understand the product quickly and trust the brand.</p>
           </div>
         </div>
-
+        <figure class="mt-8 overflow-hidden rounded-3xl border border-zinc-800/60 bg-[#0b0b0e]">
+          <img src="/case-study-1.svg" alt="Nova Flow dashboard preview with desktop and mobile interface panels" class="aspect-[16/9] w-full object-cover" loading="lazy" />
+        </figure>
       </article>
 
       <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-8 transition-all duration-300 hover:border-zinc-700/80">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">Case Study 02</p>
-        <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Security-first lead-gen platform for premium consultancies.</h3>
+        <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Lead generation page for a consulting brand.</h3>
         <div class="mt-6 space-y-4 text-zinc-400">
-          <p>Built a composable frontend with strong form validation, CORS-safe data handling, and content that speaks to buyers like CFOs and founders.</p>
+          <p>Built a fast page with clear copy and a simple form that helps serious buyers get in touch.</p>
         </div>
         <figure class="mt-8 overflow-hidden rounded-3xl border border-zinc-800/60 bg-[#0b0b0e]">
-          <img src="/case-study-2.svg" alt="Secure analytics and lead pipeline view" class="aspect-[4/3] w-full object-cover" />
+          <img src="/case-study-2.svg" alt="Secure analytics and lead pipeline view" class="aspect-[4/3] w-full object-cover" loading="lazy" />
         </figure>
       </article>
 
       <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-8 transition-all duration-300 hover:border-zinc-700/80">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">Case Study 03</p>
-        <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Conversion-focused SaaS launch page with premium clarity.</h3>
+        <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Launch page for a software product.</h3>
         <div class="mt-6 space-y-4 text-zinc-400">
-          <p>Optimized the route for higher intent through semantic content sections, fast hero rendering, and polished proof points for enterprise buyers.</p>
+          <p>Created a simple page that explains the offer and guides visitors toward the next step.</p>
         </div>
         <figure class="mt-8 overflow-hidden rounded-3xl border border-zinc-800/60 bg-[#0b0b0e]">
-          <img src="/case-study-3.svg" alt="Visual outline of a premium productized service offering" class="aspect-[4/3] w-full object-cover" />
+          <img src="/case-study-3.svg" alt="Visual outline of a premium productized service offering" class="aspect-[4/3] w-full object-cover" loading="lazy" />
         </figure>
       </article>
     </div>
@@ -121,18 +135,18 @@ const canonical = 'https://yourdomain.com';
   <section id="services" class="space-y-10 pb-20">
     <div class="space-y-4">
       <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[04 / SERVICES]</p>
-      <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Productized packages for fast decisions and clear ROI.</h2>
-      <p class="max-w-3xl text-base leading-8 text-zinc-400">Transparent flat-rate tiers with a premium experience for businesses who need speed, trust, and measurable growth without negotiation.</p>
+      <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Simple website packages with clear pricing.</h2>
+      <p class="max-w-3xl text-base leading-8 text-zinc-400">Choose the package that fits your goal. Each one includes a clear process and a polished final site.</p>
     </div>
 
     <div class="grid gap-6 lg:grid-cols-3">
       <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-8 transition-all duration-300 hover:border-zinc-700/80">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">Tier</p>
         <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Landing Page Accelerator</h3>
-        <p class="mt-4 text-zinc-400">A high-conversion landing page built for direct response, lead generation, and premium positioning.</p>
+        <p class="mt-4 text-zinc-400">A focused landing page for one offer and one clear action.</p>
         <div class="mt-6 space-y-3 text-white">
-          <p class="text-3xl font-semibold">$4,500</p>
-          <p class="text-sm text-zinc-500">Includes hero, proof, service architecture, and conversion path.</p>
+          <p class="text-3xl font-semibold">$4500</p>
+          <p class="text-sm text-zinc-500">Includes the main section and proof points and a contact path.</p>
         </div>
         <a href="#audit" class="mt-8 inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-semibold text-black transition-all duration-300 ease-out hover:shadow-[0_0_40px_rgba(0,179,126,0.2)]">Request this tier</a>
       </article>
@@ -140,10 +154,10 @@ const canonical = 'https://yourdomain.com';
       <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-8 transition-all duration-300 hover:border-zinc-700/80">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">Tier</p>
         <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Business Engine Launch</h3>
-        <p class="mt-4 text-zinc-400">A full service digital foundation with content structure, SEO, analytics, and launch-ready trust flows.</p>
+        <p class="mt-4 text-zinc-400">A full website for a business that needs trust and clear service pages.</p>
         <div class="mt-6 space-y-3 text-white">
-          <p class="text-3xl font-semibold">$9,500</p>
-          <p class="text-sm text-zinc-500">Includes full product pages, optimized copy structure, and post-launch performance tuning.</p>
+          <p class="text-3xl font-semibold">$9500</p>
+          <p class="text-sm text-zinc-500">Includes core pages and clear copy and launch support.</p>
         </div>
         <a href="#audit" class="mt-8 inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-semibold text-black transition-all duration-300 ease-out hover:shadow-[0_0_40px_rgba(0,179,126,0.2)]">Start your project</a>
       </article>
@@ -151,10 +165,10 @@ const canonical = 'https://yourdomain.com';
       <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-8 transition-all duration-300 hover:border-zinc-700/80">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">Tier</p>
         <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Conversion Growth Suite</h3>
-        <p class="mt-4 text-zinc-400">The strategic roadmap package for ongoing optimization, A/B refinement, and sustained growth.</p>
+        <p class="mt-4 text-zinc-400">A growth package for teams that want steady improvements after launch.</p>
         <div class="mt-6 space-y-3 text-white">
-          <p class="text-3xl font-semibold">$14,500</p>
-          <p class="text-sm text-zinc-500">Best for teams that want continuous performance improvements and enterprise-level confidence.</p>
+          <p class="text-3xl font-semibold">$14500</p>
+          <p class="text-sm text-zinc-500">Best for teams that want better pages and better results over time.</p>
         </div>
         <a href="#audit" class="mt-8 inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-semibold text-black transition-all duration-300 ease-out hover:shadow-[0_0_40px_rgba(0,179,126,0.2)]">Book the suite</a>
       </article>
@@ -164,8 +178,8 @@ const canonical = 'https://yourdomain.com';
   <section id="audit" class="pb-20">
     <div class="space-y-4">
       <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[05 / AUDIT]</p>
-      <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Request your personalized video audit with your current site link.</h2>
-      <p class="max-w-3xl text-base leading-8 text-zinc-400">Submit your business website and I’ll deliver a concise audit that highlights speed gaps, security risks, and conversion lift opportunities.</p>
+      <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Get a quick review of your current website.</h2>
+      <p class="max-w-3xl text-base leading-8 text-zinc-400">Send your site link and I will point out what is slow or unclear. You will get simple ideas you can use right away.</p>
     </div>
 
     <div class="mt-10 rounded-[2rem] border border-zinc-800/60 bg-[#141417] p-8 shadow-soft">
@@ -192,113 +206,234 @@ const canonical = 'https://yourdomain.com';
           </label>
           <div class="rounded-3xl bg-[#0f0f12] p-5 text-sm text-zinc-400">
             <p class="font-medium text-zinc-200">Privacy first</p>
-            <p class="mt-2">No analytics or marketing trackers are enabled by default. This form is built for secure, necessary contact only.</p>
+            <p class="mt-2">No extra tracking is added by default. This form is only for contact.</p>
           </div>
           <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-4 text-base font-semibold text-black transition-all duration-300 ease-out hover:shadow-[0_0_40px_rgba(0,179,126,0.2)]">Request a personalized audit</button>
         </div>
       </form>
     </div>
   </section>
-  <script is:inline type="module">
-    const canvas = document.getElementById('iphone-model-canvas');
-    if (!canvas) return;
+</Layout>
 
-    const modelUrl = '/assets/models/iphone.glb';
-    const [THREE, { GLTFLoader }] = await Promise.all([
-      import('https://unpkg.com/three@0.164.0/build/three.module.js'),
-      import('https://unpkg.com/three@0.164.0/examples/jsm/loaders/GLTFLoader.js')
-    ]);
+<script>
+  import * as THREE from 'three';
+  import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+  const sceneRoots = document.querySelectorAll<HTMLElement>('[data-iphone-scene]');
+
+  sceneRoots.forEach((root) => {
+    const canvas = root.querySelector('canvas');
+    const modelSrc = root.dataset.modelSrc;
+
+    if (!canvas || !modelSrc) {
+      return;
+    }
 
     const scene = new THREE.Scene();
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x09090b, 0);
+    const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
 
-    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
-    camera.position.set(0, 0, 4.8);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
 
-    const ambient = new THREE.AmbientLight(0xffffff, 0.75);
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
-    keyLight.position.set(3, 5, 2);
-    const fillLight = new THREE.HemisphereLight(0x7a8fa0, 0x020810, 0.45);
-    scene.add(ambient, keyLight, fillLight);
+    const makeScreenTexture = (source: HTMLImageElement) => {
+      const safeTop = Math.round(source.height * 0.04);
+      const screenScale = 1.08;
+      const canvasTexture = document.createElement('canvas');
+      canvasTexture.width = source.width;
+      canvasTexture.height = source.height;
 
-    const fallbackPhone = () => {
-      const body = new THREE.Mesh(
-        new THREE.BoxGeometry(1.4, 2.6, 0.16, 24, 24, 24),
-        new THREE.MeshStandardMaterial({ color: 0x08121a, metalness: 0.25, roughness: 0.2 })
-      );
-      const screen = new THREE.Mesh(
-        new THREE.PlaneGeometry(1.16, 2.07),
-        new THREE.MeshStandardMaterial({ color: 0x0f1721, emissive: 0x082430, emissiveIntensity: 0.15, roughness: 0.5 })
-      );
-      screen.position.z = 0.085;
-      body.add(screen);
+      const context = canvasTexture.getContext('2d');
 
-      const bezel = new THREE.LineSegments(
-        new THREE.EdgesGeometry(new THREE.PlaneGeometry(1.22, 2.13)),
-        new THREE.LineBasicMaterial({ color: 0x1c2a38 })
-      );
-      bezel.position.z = 0.087;
-      body.add(bezel);
-      body.rotation.y = 0.03;
-      scene.add(body);
-      return body;
+      if (context) {
+        const scaledWidth = source.width * screenScale;
+        const scaledHeight = source.height * screenScale;
+        const offsetX = (source.width - scaledWidth) / 2;
+
+        context.fillStyle = '#031719';
+        context.fillRect(0, 0, canvasTexture.width, canvasTexture.height);
+        context.drawImage(source, offsetX, safeTop, scaledWidth, scaledHeight);
+      }
+
+      const texture = new THREE.CanvasTexture(canvasTexture);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.flipY = false;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.generateMipmaps = false;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.center.set(0.5, 0.5);
+      texture.rotation = Math.PI;
+      texture.repeat.x = -1;
+      texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+      return texture;
     };
 
-    let modelRoot = fallbackPhone();
+    const screenImage = new Image();
+    screenImage.src = '/assets/pictures/novaflow-screen.png';
+    const screenMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      side: THREE.DoubleSide,
+      toneMapped: false
+    });
+    const bodyMaterial = new THREE.MeshStandardMaterial({
+      color: 0x111417,
+      metalness: 0.85,
+      roughness: 0.28,
+      envMapIntensity: 0.7
+    });
+    const backMaterial = new THREE.MeshStandardMaterial({
+      color: 0x07090c,
+      metalness: 0.55,
+      roughness: 0.42,
+      envMapIntensity: 0.45
+    });
+    const blackGlassMaterial = new THREE.MeshBasicMaterial({
+      color: 0x020305,
+      side: THREE.DoubleSide,
+      toneMapped: false
+    });
+
+    screenImage.addEventListener('load', () => {
+      screenMaterial.map = makeScreenTexture(screenImage);
+      screenMaterial.needsUpdate = true;
+    });
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
+    keyLight.position.set(3.5, 4, 5);
+    scene.add(keyLight);
+    scene.add(new THREE.HemisphereLight(0xb9fff1, 0x0a1020, 2.2));
+
+    const fillLight = new THREE.PointLight(0x00b37e, 18, 12);
+    fillLight.position.set(-3, 1.5, 3);
+    scene.add(fillLight);
+
+    const phoneGroup = new THREE.Group();
+    phoneGroup.rotation.set(-0.08, -0.35, 0.03);
+    scene.add(phoneGroup);
+
     const loader = new GLTFLoader();
+    let model: THREE.Object3D | null = null;
+    let animationFrame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+
+    const resize = () => {
+      const { width, height } = root.getBoundingClientRect();
+      renderer.setSize(width, height, false);
+      camera.aspect = width / Math.max(height, 1);
+      camera.position.set(0, 0.05, width < 560 ? 7 : 6.25);
+      camera.updateProjectionMatrix();
+    };
+
+    const frame = () => {
+      animationFrame = window.requestAnimationFrame(frame);
+      const time = performance.now() * 0.001;
+
+      phoneGroup.rotation.y += ((-0.35 + pointerX * 0.22) - phoneGroup.rotation.y) * 0.05;
+      phoneGroup.rotation.x += ((-0.08 + pointerY * 0.12) - phoneGroup.rotation.x) * 0.05;
+      phoneGroup.position.y = 0.28 + Math.sin(time * 1.35) * 0.06;
+
+      renderer.render(scene, camera);
+    };
+
+    root.addEventListener('pointermove', (event) => {
+      const rect = root.getBoundingClientRect();
+      pointerX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+      pointerY = -(((event.clientY - rect.top) / rect.height - 0.5) * 2);
+    });
+
+    root.addEventListener('pointerleave', () => {
+      pointerX = 0;
+      pointerY = 0;
+    });
+
     loader.load(
-      modelUrl,
+      modelSrc,
       (gltf) => {
-        if (modelRoot) scene.remove(modelRoot);
-        modelRoot = gltf.scene;
-        modelRoot.traverse((child) => {
-          if (child.isMesh) child.castShadow = child.receiveShadow = true;
+        model = gltf.scene;
+
+        model.traverse((object) => {
+          if (object.name.toLowerCase() === 'floor') {
+            object.visible = false;
+          }
+
+          const meshCandidate = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
+          const meshName = object.name.toLowerCase();
+
+          if (meshCandidate.isMesh && meshName === 'screen') {
+            meshCandidate.material = screenMaterial;
+          }
+
+          if (
+            meshCandidate.isMesh &&
+            ['metal border', 'body-screen', 'button'].includes(meshName)
+          ) {
+            meshCandidate.material = bodyMaterial;
+          }
+
+          if (meshCandidate.isMesh && meshName === 'back side') {
+            meshCandidate.material = backMaterial;
+          }
+
+          if (meshCandidate.isMesh && meshName === 'screen border') {
+            meshCandidate.material = blackGlassMaterial;
+          }
+
+          if (
+            meshCandidate.isMesh &&
+            ['rectangle', 'rectangle_5', 'ellipse', 'ellipse_2'].includes(meshName)
+          ) {
+            meshCandidate.material = blackGlassMaterial;
+          }
         });
-        modelRoot.position.set(0, -0.05, 0);
-        modelRoot.rotation.set(0.12, 0.2, 0);
-        modelRoot.scale.setScalar(1.1);
-        scene.add(modelRoot);
+
+        const box = new THREE.Box3();
+        model.traverse((object) => {
+          const meshCandidate = object as THREE.Object3D & { isMesh?: boolean };
+
+          if (meshCandidate.isMesh && object.visible) {
+            box.expandByObject(object);
+          }
+        });
+
+        if (box.isEmpty()) {
+          box.setFromObject(model);
+        }
+
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        const maxAxis = Math.max(size.x, size.y, size.z);
+        const scale = 3.05 / Math.max(maxAxis, 1);
+
+        model.scale.setScalar(scale);
+        model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+        phoneGroup.add(model);
+        root.classList.add('is-loaded');
       },
       undefined,
       () => {
-        // fallback geometry remains if the GLB is not available
+        root.classList.add('has-failed');
       }
     );
 
-    const resize = () => {
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
-      if (!width || !height) return;
-      renderer.setSize(width, height, false);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-    };
-    window.addEventListener('resize', resize);
     resize();
+    frame();
 
-    const pointer = { x: 0, y: 0 };
-    canvas.addEventListener('pointermove', (event) => {
-      const rect = canvas.getBoundingClientRect();
-      pointer.x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
-      pointer.y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
-    });
-    canvas.addEventListener('pointerleave', () => {
-      pointer.x = 0;
-      pointer.y = 0;
-    });
+    const observer = new ResizeObserver(resize);
+    observer.observe(root);
 
-    const clock = new THREE.Clock();
-    const animate = () => {
-      requestAnimationFrame(animate);
-      if (modelRoot) {
-        modelRoot.rotation.x += (pointer.y * 0.25 - modelRoot.rotation.x) * 0.08;
-        modelRoot.rotation.y += (pointer.x * 0.2 - modelRoot.rotation.y) * 0.08;
-        modelRoot.position.y = Math.sin(clock.getElapsedTime() * 0.8) * 0.025;
-      }
-      renderer.render(scene, camera);
-    };
-    animate();
-  </script>
-</Layout>
+    document.addEventListener('astro:before-swap', () => {
+      window.cancelAnimationFrame(animationFrame);
+      observer.disconnect();
+      renderer.dispose();
+    }, { once: true });
+  });
+</script>
+

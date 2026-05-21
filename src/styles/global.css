@@ -59,32 +59,311 @@ svg {
 .showcase-hero {
   background: #080c13;
   border-radius: 2rem;
-  padding: 3rem 1.25rem;
+  padding: 2.5rem 1.25rem;
 }
 
 @media (min-width: 1024px) {
   .showcase-hero {
-    padding: 4rem 2rem;
+    padding: 3rem 2rem;
   }
 }
 
 .showcase-hero .hero-copy {
-  max-width: 52rem;
+  max-width: 48rem;
 }
 
-.showcase-hero .model-container {
-  min-height: 560px;
-  border-radius: 2rem;
+.showcase-hero .hero-visual {
+  position: relative;
+  min-height: 500px;
   overflow: hidden;
-  background: #09131c;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2rem;
+  background:
+    linear-gradient(150deg, rgba(0, 179, 126, 0.18), transparent 36%),
+    radial-gradient(circle at 76% 18%, rgba(96, 165, 250, 0.2), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 42%),
+    #09131c;
   box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
 }
 
-.model-canvas {
+.showcase-hero .hero-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.68), transparent 78%);
+}
+
+.iphone-scene {
+  position: absolute;
+  inset: 0;
+  min-height: 100%;
+}
+
+.iphone-scene canvas {
+  display: block;
   width: 100%;
   height: 100%;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.iphone-scene.is-loaded canvas {
+  opacity: 1;
+}
+
+.iphone-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  transition: opacity 300ms ease;
+}
+
+.iphone-scene.is-loaded .iphone-fallback {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.iphone-scene.has-failed .iphone-fallback {
+  opacity: 1;
+}
+
+.fallback-phone {
+  display: grid;
+  align-content: center;
+  gap: 1rem;
+  width: min(52%, 17rem);
+  aspect-ratio: 9 / 18.5;
+  padding: 2rem;
+  border: 0.7rem solid #05070a;
+  border-radius: 2.5rem;
+  background:
+    linear-gradient(180deg, rgba(0, 179, 126, 0.18), transparent 45%),
+    #10151d;
+  box-shadow: 0 32px 72px rgba(0, 0, 0, 0.48);
+}
+
+.fallback-phone span {
+  width: 42%;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #00b37e;
+}
+
+.fallback-phone strong {
+  color: #ffffff;
+  font-size: clamp(2.75rem, 8vw, 5rem);
+  line-height: 0.95;
+}
+
+.fallback-phone p {
+  margin: 0;
+  color: #a1a1aa;
+}
+
+.hero-visual-caption {
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1rem;
+  color: #d4d4d8;
+}
+
+.hero-visual-caption span {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #00b37e;
+}
+
+.hero-visual-caption strong {
+  max-width: 14rem;
+  text-align: right;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.desktop-frame {
+  position: absolute;
+  left: clamp(1rem, 5vw, 3rem);
+  right: clamp(1rem, 5vw, 3rem);
+  top: 4.25rem;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  background: #0d1117;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.45);
+}
+
+.browser-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  height: 2.75rem;
+  padding: 0 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.browser-bar span {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: #6ee7b7;
+  opacity: 0.8;
+}
+
+.browser-bar span:nth-child(2) {
+  background: #facc15;
+}
+
+.browser-bar span:nth-child(3) {
+  background: #fb7185;
+}
+
+.dashboard-preview {
+  display: grid;
+  gap: 1rem;
+  height: calc(100% - 2.75rem);
+  padding: clamp(1rem, 3vw, 1.75rem);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.preview-nav {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.preview-nav span,
+.preview-grid span,
+.mobile-content div {
   display: block;
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.preview-nav span {
+  width: 22%;
+  height: 0.75rem;
+}
+
+.preview-hero {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.preview-hero div,
+.preview-hero > span {
+  min-height: 8rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  background: rgba(4, 11, 18, 0.72);
+}
+
+.preview-hero div {
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.preview-hero p,
+.mobile-content p {
+  margin: 0;
+  color: #a1a1aa;
+}
+
+.preview-hero strong,
+.mobile-content strong {
+  display: block;
+  margin-top: 0.75rem;
+  color: #ffffff;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1;
+}
+
+.preview-hero > span {
+  background:
+    linear-gradient(135deg, rgba(0, 179, 126, 0.45), transparent 64%),
+    rgba(255, 255, 255, 0.06);
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.preview-grid span {
+  min-height: 5.75rem;
+}
+
+.mobile-frame {
+  position: absolute;
+  right: clamp(1rem, 5vw, 2.5rem);
+  bottom: 2rem;
+  width: min(34%, 12.5rem);
+  min-width: 8.75rem;
+  aspect-ratio: 9 / 18.5;
+  border: 0.6rem solid #05070a;
+  border-radius: 2rem;
+  background: #0d1117;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.55);
+}
+
+.mobile-notch {
+  position: absolute;
+  top: 0.45rem;
+  left: 50%;
+  width: 36%;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #05070a;
+  transform: translateX(-50%);
+}
+
+.mobile-content {
+  display: grid;
+  align-content: center;
+  gap: 0.85rem;
+  height: 100%;
+  padding: 1.1rem;
+  border-radius: 1.35rem;
+  background:
+    linear-gradient(180deg, rgba(0, 179, 126, 0.16), transparent 45%),
+    #10151d;
+}
+
+.mobile-content > span {
+  width: 46%;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #00b37e;
+}
+
+.mobile-content strong {
+  font-size: clamp(2rem, 7vw, 3.75rem);
+}
+
+.mobile-content div {
+  height: 4.5rem;
 }
 
 @media (max-width: 1023px) {
@@ -92,8 +371,29 @@ svg {
     border-radius: 1.75rem;
     padding: 2rem 1rem;
   }
-  .showcase-hero .model-container {
-    min-height: 420px;
+  .showcase-hero .hero-visual {
+    min-height: 380px;
+  }
+
+  .hero-visual-caption {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hero-visual-caption strong {
+    text-align: left;
+  }
+
+  .desktop-frame {
+    top: 2.25rem;
+  }
+
+  .preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .preview-grid span {
+    min-height: 3.25rem;
   }
 }
 
