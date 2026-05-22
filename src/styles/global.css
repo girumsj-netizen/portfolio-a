@@ -174,7 +174,7 @@ svg {
 
 .showcase-hero .hero-visual {
   position: relative;
-  min-height: 500px;
+  min-height: 300px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 2rem;
@@ -231,6 +231,44 @@ svg {
 
 .iphone-scene.is-loaded canvas {
   opacity: 1;
+}
+
+.laptop-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+}
+
+.laptop-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.laptop-scene.is-loaded canvas {
+  opacity: 1;
+}
+
+@media (max-width: 639px) {
+  .showcase-hero {
+    padding: 1.5rem 1rem;
+  }
+
+  .showcase-hero .hero-copy h1 {
+    font-size: 2.5rem;
+    line-height: 1.1;
+  }
+
+  .showcase-hero .hero-copy p {
+    font-size: 1rem;
+  }
+
+  .grid.gap-6 {
+    gap: 1rem;
+  }
 }
 
 .iphone-fallback {
@@ -489,7 +527,7 @@ svg {
     padding: 2rem 1rem;
   }
   .showcase-hero .hero-visual {
-    min-height: 380px;
+    min-height: 320px;
   }
 
   .hero-visual-caption {
@@ -511,6 +549,33 @@ svg {
 
   .preview-grid span {
     min-height: 3.25rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .showcase-hero {
+    padding: 1.5rem 1rem;
+  }
+
+  .showcase-hero .hero-copy h1 {
+    font-size: 2.25rem;
+    line-height: 1.1;
+  }
+
+  .showcase-hero .hero-copy p {
+    font-size: 0.95rem;
+  }
+
+  .grid.gap-6 {
+    gap: 1rem;
+  }
+
+  article.rounded-2xl {
+    padding: 1.25rem;
+  }
+
+  h3.text-2xl {
+    font-size: 1.5rem;
   }
 }
 
