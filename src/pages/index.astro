@@ -999,38 +999,32 @@ document.addEventListener('astro:before-swap', () => {
       monitorStand.castShadow = true;
       stage.add(monitorStand);
 
-      scene.add(new THREE.HemisphereLight(0xc4d6e8, 0x17110f, 1.45));
+       scene.add(new THREE.HemisphereLight(0xc4d6e8, 0x17110f, 0.8)); // Reduced hemisphere light
 
-      const keyLight = new THREE.DirectionalLight(0xffead2, 2.85);
-      keyLight.position.set(-3.5, 5.5, 4.2);
-      keyLight.castShadow = true;
-      keyLight.shadow.mapSize.set(2048, 2048);
-      keyLight.shadow.bias = -0.00025;
-      keyLight.shadow.camera.near = 0.5;
-      keyLight.shadow.camera.far = 14;
-      keyLight.shadow.camera.left = -5;
-      keyLight.shadow.camera.right = 5;
-      keyLight.shadow.camera.top = 5;
-      keyLight.shadow.camera.bottom = -4;
-      scene.add(keyLight);
+       // Key light from above for strong shadows
+       const keyLight = new THREE.DirectionalLight(0xffead2, 3.5);
+       keyLight.position.set(0, 10, 0);  // Directly overhead for top-down shadows
+       keyLight.castShadow = true;
+       keyLight.shadow.mapSize.set(2048, 2048);
+       keyLight.shadow.bias = -0.00025;
+       keyLight.shadow.camera.near = 0.5;
+       keyLight.shadow.camera.far = 20;
+       keyLight.shadow.camera.left = -10;
+       keyLight.shadow.camera.right = 10;
+       keyLight.shadow.camera.top = 10;
+       keyLight.shadow.camera.bottom = -10;
+       scene.add(keyLight);
 
-      const windowLight = new THREE.DirectionalLight(0xbbe8ff, 1.65);
-      windowLight.position.set(4.5, 3.4, 1.4);
-      windowLight.castShadow = true;
-      windowLight.shadow.mapSize.set(1024, 1024);
-      scene.add(windowLight);
+       // Soft natural window light (fill light)
+       const windowLight = new THREE.DirectionalLight(0xb3d4ff, 1.2);
+       windowLight.position.set(-8, 6, 3);  // From left-front window
+       windowLight.castShadow = false;  // Window light doesn't need to cast shadows
+       scene.add(windowLight);
 
-      const rimHighlight = new THREE.PointLight(0xffb486, 1.35, 5.5);
-      rimHighlight.position.set(2.4, 1.4, 2.1);
-      scene.add(rimHighlight);
-
-      const accentLight = new THREE.PointLight(0x00b37e, 2.2, 7);
-      accentLight.position.set(-3.1, 1.6, -3.6);
-      scene.add(accentLight);
-
-      const screenGlow = new THREE.PointLight(0xd7eaff, 2.0, 7);
-      screenGlow.position.set(-0.25, 0.4, 2.6);
-      scene.add(screenGlow);
+       // Optional subtle rim light for separation (very subtle)
+       const rimHighlight = new THREE.PointLight(0xffb486, 0.4, 5.5);
+       rimHighlight.position.set(2.4, 1.4, 2.1);
+       scene.add(rimHighlight);
 
       const laptopGroup = new THREE.Group();
       scene.add(laptopGroup);
@@ -1191,15 +1185,15 @@ document.addEventListener('astro:before-swap', () => {
           laptopGroup.rotation.set(laptopBaseRotationX, laptopBaseRotationY, 0.01);
           laptopGroup.position.set(-0.1, laptopBaseY, 0.1);
 
-          const contactShadow = new THREE.Mesh(
-            new THREE.CircleGeometry(1.95, 64),
-            new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.38 })
-          );
-          contactShadow.rotation.x = -Math.PI / 2;
-          contactShadow.position.set(-0.06, -1.0, 0.28);
-          contactShadow.scale.set(1.25, 0.45, 1);
-          contactShadow.receiveShadow = true;
-          scene.add(contactShadow);
+           const contactShadow = new THREE.Mesh(
+             new THREE.CircleGeometry(2.2, 64),
+             new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.45 })
+           );
+           contactShadow.rotation.x = -Math.PI / 2;
+           contactShadow.position.set(-0.06, -1.0, 0.28);
+           contactShadow.scale.set(1.35, 0.5, 1);
+           contactShadow.receiveShadow = true;
+           scene.add(contactShadow);
 
           videoElement.addEventListener('loadeddata', () => {
             videoTexture = new THREE.VideoTexture(videoElement!);
