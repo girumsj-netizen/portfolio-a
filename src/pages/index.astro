@@ -143,7 +143,7 @@ const canonical = 'https://yourdomain.com';
             </div>
           </div>
           <div class="relative h-56 overflow-hidden rounded-3xl border border-zinc-800/60 bg-[#0b0b0e] sm:h-80 md:h-96">
-            <div class="laptop-scene h-full w-full" data-laptop-scene data-model-src="/assets/models/laptop.glb">
+            <div class="laptop-scene h-full w-full" data-laptop-scene data-model-src="/assets/models/macbook.glb">
               <canvas aria-hidden="true"></canvas>
             </div>
           </div>
@@ -276,19 +276,20 @@ const canonical = 'https://yourdomain.com';
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: true,
-      powerPreference: 'high-performance'
-    });
+     const renderer = new THREE.WebGLRenderer({
+       canvas,
+       alpha: true,
+       antialias: true,
+       powerPreference: 'high-performance'
+     });
 
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.08;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
+     renderer.outputColorSpace = THREE.SRGBColorSpace;
+     renderer.toneMapping = THREE.ACESFilmicToneMapping;
+     renderer.toneMappingExposure = 1.08;
+     renderer.shadowMap.enabled = true;
+     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+     // Reduced pixel ratio for better performance on mobile devices
+     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     const makeScreenTexture = (source: HTMLImageElement) => {
       const safeTop = Math.round(source.height * 0.04);
@@ -506,87 +507,99 @@ const frame = () => {
       pointerY = 0;
     });
 
-    loader.load(
-      modelSrc,
-      (gltf) => {
-        model = gltf.scene;
+    // Load model only when element is visible to improve initial load performance
+    const loadModel = () => {
+      loader.load(
+        modelSrc,
+        (gltf) => {
+          model = gltf.scene;
 
-        model.traverse((object) => {
-          if (object.name.toLowerCase() === 'floor') {
-            object.visible = false;
+          model.traverse((object) => {
+            if (object.name.toLowerCase() === 'floor') {
+              object.visible = false;
+            }
+
+            const meshCandidate = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
+            const meshName = object.name.toLowerCase();
+            const parentName = object.parent?.name.toLowerCase() ?? '';
+            const normalizedName = meshName.replace(/[\s-]+/g, '_');
+            const normalizedParentName = parentName.replace(/[\s-]+/g, '_');
+
+            if (meshCandidate.isMesh && meshName === 'screen') {
+              meshCandidate.castShadow = false;
+              meshCandidate.receiveShadow = false;
+              meshCandidate.material = screenMaterial;
+              return;
+            }
+
+            if (
+              meshCandidate.isMesh &&
+              (
+                normalizedName === 'screen_border' ||
+                normalizedParentName.includes('dynamic_island') ||
+                normalizedParentName.includes('camera') ||
+                normalizedParentName.includes('cam') ||
+                normalizedName.includes('cam')
+              )
+            ) {
+              meshCandidate.castShadow = true;
+              meshCandidate.receiveShadow = true;
+              meshCandidate.material = blackGlassMaterial;
+              return;
+            }
+
+            if (meshCandidate.isMesh && normalizedName === 'back_side') {
+              meshCandidate.castShadow = true;
+              meshCandidate.receiveShadow = true;
+              meshCandidate.material = backMaterial;
+              return;
+            }
+
+            if (meshCandidate.isMesh) {
+              meshCandidate.castShadow = true;
+              meshCandidate.receiveShadow = true;
+              meshCandidate.material = bodyMaterial;
+            }
+          });
+
+          const box = new THREE.Box3();
+          model.traverse((object) => {
+            const meshCandidate = object as THREE.Object3D & { isMesh?: boolean };
+
+            if (meshCandidate.isMesh && object.visible) {
+              box.expandByObject(object);
+            }
+          });
+
+          if (box.isEmpty()) {
+            box.setFromObject(model);
           }
 
-          const meshCandidate = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
-          const meshName = object.name.toLowerCase();
-          const parentName = object.parent?.name.toLowerCase() ?? '';
-          const normalizedName = meshName.replace(/[\s-]+/g, '_');
-          const normalizedParentName = parentName.replace(/[\s-]+/g, '_');
+          const size = box.getSize(new THREE.Vector3());
+          const center = box.getCenter(new THREE.Vector3());
+          const maxAxis = Math.max(size.x, size.y, size.z);
+          const scale = 3.05 / Math.max(maxAxis, 1);
 
-          if (meshCandidate.isMesh && meshName === 'screen') {
-            meshCandidate.castShadow = false;
-            meshCandidate.receiveShadow = false;
-            meshCandidate.material = screenMaterial;
-            return;
-          }
-
-          if (
-            meshCandidate.isMesh &&
-            (
-              normalizedName === 'screen_border' ||
-              normalizedParentName.includes('dynamic_island') ||
-              normalizedParentName.includes('camera') ||
-              normalizedParentName.includes('cam') ||
-              normalizedName.includes('cam')
-            )
-          ) {
-            meshCandidate.castShadow = true;
-            meshCandidate.receiveShadow = true;
-            meshCandidate.material = blackGlassMaterial;
-            return;
-          }
-
-          if (meshCandidate.isMesh && normalizedName === 'back_side') {
-            meshCandidate.castShadow = true;
-            meshCandidate.receiveShadow = true;
-            meshCandidate.material = backMaterial;
-            return;
-          }
-
-if (meshCandidate.isMesh) {
-  meshCandidate.castShadow = true;
-  meshCandidate.receiveShadow = true;
-  meshCandidate.material = bodyMaterial;
-}
-        });
-
-        const box = new THREE.Box3();
-        model.traverse((object) => {
-          const meshCandidate = object as THREE.Object3D & { isMesh?: boolean };
-
-          if (meshCandidate.isMesh && object.visible) {
-            box.expandByObject(object);
-          }
-        });
-
-        if (box.isEmpty()) {
-          box.setFromObject(model);
+          model.scale.setScalar(scale);
+          model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+          phoneGroup.add(model);
+          root.classList.add('is-loaded');
+        },
+        undefined,
+        () => {
+          root.classList.add('has-failed');
         }
+      );
+    };
 
-        const size = box.getSize(new THREE.Vector3());
-        const center = box.getCenter(new THREE.Vector3());
-        const maxAxis = Math.max(size.x, size.y, size.z);
-        const scale = 3.05 / Math.max(maxAxis, 1);
-
-        model.scale.setScalar(scale);
-        model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
-        phoneGroup.add(model);
-        root.classList.add('is-loaded');
-      },
-      undefined,
-      () => {
-        root.classList.add('has-failed');
+    // Start loading when element enters viewport
+    const loadObserver = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        loadModel();
+        loadObserver.disconnect(); // Only load once
       }
-    );
+    }, { rootMargin: '50px' }); // Start loading when 50px away from viewport
+    loadObserver.observe(root);
 
     resize();
     startFrame();
@@ -648,454 +661,79 @@ document.addEventListener('astro:before-swap', () => {
         powerPreference: 'high-performance'
       });
 
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.12;
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+       renderer.toneMapping = THREE.ACESFilmicToneMapping;
+       renderer.toneMappingExposure = 1.12;
+       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+       renderer.shadowMap.enabled = true;
+       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-      scene.background = new THREE.Color(0x0b1118);
-      scene.fog = new THREE.Fog(0x0b1118, 9, 24);
+       const pmremGenerator = new THREE.PMREMGenerator(renderer);
+       const environmentMap = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+       scene.environment = environmentMap;
+       pmremGenerator.dispose();
 
-      const pmremGenerator = new THREE.PMREMGenerator(renderer);
-      const environmentMap = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-      scene.environment = environmentMap;
-      pmremGenerator.dispose();
+       scene.add(new THREE.HemisphereLight(0xffffff, 0x404040, 1.2));
 
-      const stage = new THREE.Group();
-      scene.add(stage);
-
-      const textureLoader = new THREE.TextureLoader();
-      const framedImageTexture = textureLoader.load('/case-study-2.svg');
-      framedImageTexture.colorSpace = THREE.SRGBColorSpace;
-
-      const loadSceneTexture = (src: string, repeatX = 1, repeatY = 1, colorTexture = false) => {
-        const texture = textureLoader.load(src);
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(repeatX, repeatY);
-        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-        if (colorTexture) texture.colorSpace = THREE.SRGBColorSpace;
-        return texture;
-      };
-
-      const rammedEarthColor = loadSceneTexture('/assets/textures/RammedEarth006_COL_2K_METALNESS.png', 1.65, 1, true);
-      const rammedEarthNormal = loadSceneTexture('/assets/textures/RammedEarth006_NRM_2K_METALNESS.png', 1.65, 1);
-      const rammedEarthRoughness = loadSceneTexture('/assets/textures/RammedEarth006_ROUGHNESS_2K_METALNESS.png', 1.65, 1);
-      const brushedMetalColor = loadSceneTexture('/assets/textures/Poliigon_MetalSteelBrushed_7174_BaseColor.jpg', 2.4, 1.2, true);
-      const brushedMetalNormal = loadSceneTexture('/assets/textures/Poliigon_MetalSteelBrushed_7174_Normal.png', 2.4, 1.2);
-      const brushedMetalRoughness = loadSceneTexture('/assets/textures/Poliigon_MetalSteelBrushed_7174_Roughness.jpg', 2.4, 1.2);
-      const brushedMetalMetalness = loadSceneTexture('/assets/textures/Poliigon_MetalSteelBrushed_7174_Metallic.jpg', 2.4, 1.2);
-      const oakColor = loadSceneTexture('/assets/textures/Poliigon_WoodVeneerOak_7760_BaseColor.jpg', 2.2, 0.8, true);
-      const oakNormal = loadSceneTexture('/assets/textures/Poliigon_WoodVeneerOak_7760_Normal.png', 2.2, 0.8);
-      const oakRoughness = loadSceneTexture('/assets/textures/Poliigon_WoodVeneerOak_7760_Roughness.jpg', 2.2, 0.8);
-      const oakAO = loadSceneTexture('/assets/textures/Poliigon_WoodVeneerOak_7760_AmbientOcclusion.jpg', 2.2, 0.8);
-      const quartziteColor = loadSceneTexture('/assets/textures/Poliigon_StoneQuartzite_8060_BaseColor.jpg', 3.2, 2.2, true);
-      const quartziteNormal = loadSceneTexture('/assets/textures/Poliigon_StoneQuartzite_8060_Normal.png', 3.2, 2.2);
-      const quartziteRoughness = loadSceneTexture('/assets/textures/Poliigon_StoneQuartzite_8060_Roughness.jpg', 3.2, 2.2);
-      const quartziteAO = loadSceneTexture('/assets/textures/Poliigon_StoneQuartzite_8060_AmbientOcclusion.jpg', 3.2, 2.2);
-
-      const makeCanvasTexture = (
-        paint: (context: CanvasRenderingContext2D, size: number) => void,
-        repeatX = 1,
-        repeatY = 1
-      ) => {
-        const size = 512;
-        const textureCanvas = document.createElement('canvas');
-        textureCanvas.width = size;
-        textureCanvas.height = size;
-        const context = textureCanvas.getContext('2d');
-
-        if (!context) return null;
-
-        paint(context, size);
-        const texture = new THREE.CanvasTexture(textureCanvas);
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(repeatX, repeatY);
-        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-        return texture;
-      };
-
-      const wallTexture = makeCanvasTexture((context, size) => {
-        context.fillStyle = '#182331';
-        context.fillRect(0, 0, size, size);
-
-        for (let i = 0; i < 1800; i += 1) {
-          const value = 28 + Math.random() * 42;
-          context.fillStyle = `rgba(${value}, ${value + 8}, ${value + 16}, 0.08)`;
-          context.fillRect(Math.random() * size, Math.random() * size, 1, 1);
-        }
-
-        const gradient = context.createLinearGradient(0, 0, size, size);
-        gradient.addColorStop(0, 'rgba(0, 179, 126, 0.14)');
-        gradient.addColorStop(0.48, 'rgba(7, 15, 24, 0)');
-        gradient.addColorStop(1, 'rgba(147, 109, 83, 0.12)');
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, size, size);
-      }, 2, 1);
-
-      const woodTexture = makeCanvasTexture((context, size) => {
-        const base = context.createLinearGradient(0, 0, size, 0);
-        base.addColorStop(0, '#211815');
-        base.addColorStop(0.45, '#3a2a22');
-        base.addColorStop(1, '#171312');
-        context.fillStyle = base;
-        context.fillRect(0, 0, size, size);
-
-        for (let y = 0; y < size; y += 9) {
-          context.strokeStyle = `rgba(210, 158, 104, ${0.06 + Math.random() * 0.06})`;
-          context.lineWidth = 1 + Math.random() * 2;
-          context.beginPath();
-          context.moveTo(0, y + Math.sin(y * 0.04) * 6);
-          for (let x = 0; x <= size; x += 32) {
-            context.lineTo(x, y + Math.sin(x * 0.018 + y * 0.035) * 8);
-          }
-          context.stroke();
-        }
-      }, 3, 1);
-
-      const posterTexture = makeCanvasTexture((context, size) => {
-        const gradient = context.createLinearGradient(0, 0, size, size);
-        gradient.addColorStop(0, '#07121a');
-        gradient.addColorStop(0.48, '#1c1130');
-        gradient.addColorStop(1, '#041f1a');
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, size, size);
-
-        context.fillStyle = 'rgba(0, 179, 126, 0.18)';
-        context.fillRect(size * 0.12, size * 0.18, size * 0.72, size * 0.06);
-        context.fillStyle = 'rgba(188, 137, 255, 0.18)';
-        context.fillRect(size * 0.12, size * 0.31, size * 0.46, size * 0.05);
-
-        for (let i = 0; i < 90; i += 1) {
-          context.fillStyle = `rgba(170, 120, 255, ${0.08 + Math.random() * 0.2})`;
-          context.beginPath();
-          context.arc(Math.random() * size, Math.random() * size, 1 + Math.random() * 2.5, 0, Math.PI * 2);
-          context.fill();
-        }
-
-        const bloom = context.createRadialGradient(size * 0.68, size * 0.58, 4, size * 0.68, size * 0.58, size * 0.35);
-        bloom.addColorStop(0, 'rgba(0, 179, 126, 0.55)');
-        bloom.addColorStop(1, 'rgba(0, 179, 126, 0)');
-        context.fillStyle = bloom;
-        context.fillRect(0, 0, size, size);
-      });
-
-      const wallMaterial = new THREE.MeshStandardMaterial({
-        color: 0x6a7376,
-        map: rammedEarthColor,
-        normalMap: rammedEarthNormal,
-        roughnessMap: rammedEarthRoughness,
-        normalScale: new THREE.Vector2(0.34, 0.34),
-        roughness: 0.82,
-        metalness: 0,
-        envMapIntensity: 0.28
-      });
-      const deskMaterial = new THREE.MeshStandardMaterial({
-        color: 0x7b5740,
-        map: oakColor,
-        normalMap: oakNormal,
-        roughnessMap: oakRoughness,
-        aoMap: oakAO,
-        normalScale: new THREE.Vector2(0.22, 0.22),
-        roughness: 0.52,
-        metalness: 0.04,
-        envMapIntensity: 0.45
-      });
-      const trimMaterial = new THREE.MeshStandardMaterial({
-        color: 0x89919a,
-        map: brushedMetalColor,
-        normalMap: brushedMetalNormal,
-        roughnessMap: brushedMetalRoughness,
-        metalnessMap: brushedMetalMetalness,
-        normalScale: new THREE.Vector2(0.2, 0.2),
-        roughness: 0.48,
-        metalness: 0.55,
-        envMapIntensity: 0.75
-      });
-      const accentPanelMaterial = new THREE.MeshStandardMaterial({
-        color: 0x133f3a,
-        roughness: 0.72,
-        metalness: 0.02,
-        emissive: 0x031a16,
-        emissiveIntensity: 0.55
-      });
-      const warmPanelMaterial = new THREE.MeshStandardMaterial({
-        color: 0x4b3b34,
-        roughness: 0.7,
-        metalness: 0.03
-      });
-
-      const backWall = new THREE.Mesh(new THREE.PlaneGeometry(18, 10), wallMaterial);
-      backWall.position.set(0, 1.9, -7);
-      stage.add(backWall);
-
-      const desk = new THREE.Mesh(new THREE.BoxGeometry(9.8, 0.32, 3.2), deskMaterial);
-      desk.geometry.setAttribute('uv2', desk.geometry.attributes.uv.clone());
-      desk.position.set(0, -1.12, 0.85);
-      desk.castShadow = true;
-      desk.receiveShadow = true;
-      stage.add(desk);
-
-      const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(18, 9),
-        new THREE.MeshStandardMaterial({
-          color: 0x909196,
-          map: quartziteColor,
-          normalMap: quartziteNormal,
-          roughnessMap: quartziteRoughness,
-          aoMap: quartziteAO,
-          normalScale: new THREE.Vector2(0.38, 0.38),
-          roughness: 0.93,
-          metalness: 0.02,
-          envMapIntensity: 0.12
-        })
-      );
-      floor.geometry.setAttribute('uv2', floor.geometry.attributes.uv.clone());
-      floor.rotation.x = -Math.PI / 2;
-      floor.position.set(0, -1.29, -0.15);
-      floor.receiveShadow = true;
-      stage.add(floor);
-
-      const deskEdge = new THREE.Mesh(new THREE.BoxGeometry(9.9, 0.05, 0.08), trimMaterial);
-      deskEdge.position.set(0, -0.93, 2.46);
-      stage.add(deskEdge);
-
-      const deskHighlight = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 1.4), new THREE.MeshBasicMaterial({
-        color: 0xffd0a3,
-        transparent: true,
-        opacity: 0.08,
-        depthWrite: false,
-        toneMapped: false
-      }));
-      deskHighlight.rotation.x = -Math.PI / 2;
-      deskHighlight.position.set(-0.7, -0.94, 0.72);
-      stage.add(deskHighlight);
-
-      for (let index = 0; index < 4; index += 1) {
-        const panel = new THREE.Mesh(
-          new THREE.BoxGeometry(1.35, 3.4, 0.04),
-          index === 1 ? accentPanelMaterial : index === 3 ? warmPanelMaterial : trimMaterial
-        );
-        panel.position.set(-4.6 + index * 1.65, 1.8, -6.84);
-        panel.scale.y = index % 2 === 0 ? 1 : 0.82;
-        stage.add(panel);
-      }
-
-      const accentGlow = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 1.7), new THREE.MeshBasicMaterial({
-        color: 0x00b37e,
-        transparent: true,
-        opacity: 0.12,
-        toneMapped: false
-      }));
-      accentGlow.position.set(-3.0, 1.65, -6.8);
-      stage.add(accentGlow);
-
-      const posterFrame = new THREE.Mesh(new THREE.BoxGeometry(1.45, 1.05, 0.08), new THREE.MeshStandardMaterial({
-        color: 0x101419,
-        roughness: 0.52,
-        metalness: 0.2
-      }));
-      posterFrame.position.set(2.62, 2.2, -6.78);
-      posterFrame.rotation.y = -0.04;
-      posterFrame.castShadow = true;
-      stage.add(posterFrame);
-
-      const poster = new THREE.Mesh(new THREE.PlaneGeometry(1.28, 0.88), new THREE.MeshBasicMaterial({
-        map: posterTexture ?? undefined,
-        color: posterTexture ? 0xffffff : 0x1c1130,
-        toneMapped: false
-      }));
-      poster.position.set(2.62, 2.2, -6.72);
-      poster.rotation.y = -0.04;
-      stage.add(poster);
-
-      const wallShadow = new THREE.Mesh(new THREE.PlaneGeometry(7.2, 3.4), new THREE.MeshBasicMaterial({
-        color: 0x000000,
-        transparent: true,
-        opacity: 0.1,
-        depthWrite: false,
-        toneMapped: false
-      }));
-      wallShadow.position.set(1.1, 0.55, -6.72);
-      wallShadow.rotation.z = -0.04;
-      stage.add(wallShadow);
-
-      const imageFrame = new THREE.Mesh(new THREE.BoxGeometry(1.16, 0.82, 0.07), new THREE.MeshStandardMaterial({
-        color: 0x0c1015,
-        roughness: 0.5,
-        metalness: 0.16
-      }));
-      imageFrame.position.set(4.32, 1.78, -6.68);
-      imageFrame.rotation.y = -0.08;
-      imageFrame.castShadow = true;
-      stage.add(imageFrame);
-
-      const framedImage = new THREE.Mesh(new THREE.PlaneGeometry(1.02, 0.66), new THREE.MeshBasicMaterial({
-        map: framedImageTexture,
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.78,
-        toneMapped: false
-      }));
-      framedImage.position.set(4.31, 1.78, -6.62);
-      framedImage.rotation.y = -0.08;
-      stage.add(framedImage);
-
-      const roomHaze = new THREE.Mesh(new THREE.PlaneGeometry(10.8, 5.2), new THREE.MeshBasicMaterial({
-        color: 0x9ec0d0,
-        transparent: true,
-        opacity: 0.045,
-        depthWrite: false,
-        toneMapped: false
-      }));
-      roomHaze.position.set(0.85, 1.15, -2.7);
-      roomHaze.rotation.y = -0.05;
-      stage.add(roomHaze);
-
-      const windowFrame = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.35, 0.08), trimMaterial);
-      windowFrame.position.set(4.2, 2.2, -6.9);
-      stage.add(windowFrame);
-
-      const windowPane = new THREE.Mesh(new THREE.PlaneGeometry(3.45, 2.0), new THREE.MeshBasicMaterial({
-        color: 0xc6d4df,
-        transparent: true,
-        opacity: 0.16,
-        toneMapped: false
-      }));
-      windowPane.position.set(4.2, 2.2, -6.84);
-      stage.add(windowPane);
-
-      const lightStrip = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 0.08), new THREE.MeshBasicMaterial({
-        color: 0xe7f2ff,
-        transparent: true,
-        opacity: 0.34,
-        toneMapped: false
-      }));
-      lightStrip.position.set(-1.0, 4.35, -6.82);
-      stage.add(lightStrip);
-
-      const sideMonitor = new THREE.Mesh(
-        new THREE.BoxGeometry(1.5, 0.88, 0.08),
-        new THREE.MeshStandardMaterial({
-          color: 0x0a0d12,
-          roughness: 0.5,
-          metalness: 0.18,
-          emissive: 0x071c25,
-          emissiveIntensity: 0.35
-        })
-      );
-      sideMonitor.position.set(3.55, 0.18, -1.65);
-      sideMonitor.rotation.y = -0.24;
-      sideMonitor.castShadow = true;
-      stage.add(sideMonitor);
-
-      const monitorStand = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.72, 0.1), trimMaterial);
-      monitorStand.position.set(3.43, -0.62, -1.48);
-      monitorStand.rotation.y = -0.24;
-      monitorStand.castShadow = true;
-      stage.add(monitorStand);
-
-       scene.add(new THREE.HemisphereLight(0xc4d6e8, 0x17110f, 0.8)); // Reduced hemisphere light
-
-       // Key light from above for strong shadows
-       const keyLight = new THREE.DirectionalLight(0xffead2, 3.5);
-       keyLight.position.set(0, 10, 0);  // Directly overhead for top-down shadows
+       const keyLight = new THREE.DirectionalLight(0xfff2dd, 1.8);
+       keyLight.position.set(2, 3, 2);
        keyLight.castShadow = true;
-       keyLight.shadow.mapSize.set(2048, 2048);
-       keyLight.shadow.bias = -0.00025;
-       keyLight.shadow.camera.near = 0.5;
-       keyLight.shadow.camera.far = 20;
-       keyLight.shadow.camera.left = -10;
-       keyLight.shadow.camera.right = 10;
-       keyLight.shadow.camera.top = 10;
-       keyLight.shadow.camera.bottom = -10;
        scene.add(keyLight);
 
-       // Soft natural window light (fill light)
-       const windowLight = new THREE.DirectionalLight(0xb3d4ff, 1.2);
-       windowLight.position.set(-8, 6, 3);  // From left-front window
-       windowLight.castShadow = false;  // Window light doesn't need to cast shadows
-       scene.add(windowLight);
+       const laptopGroup = new THREE.Group();
+       scene.add(laptopGroup);
 
-       // Optional subtle rim light for separation (very subtle)
-       const rimHighlight = new THREE.PointLight(0xffb486, 0.4, 5.5);
-       rimHighlight.position.set(2.4, 1.4, 2.1);
-       scene.add(rimHighlight);
+       const screenMaterial = new THREE.MeshBasicMaterial({
+         color: 0xffffff,
+         side: THREE.DoubleSide,
+         toneMapped: false
+       });
 
-      const laptopGroup = new THREE.Group();
-      scene.add(laptopGroup);
+       let animationFrame = 0;
+       let isAnimating = false;
+       let isSceneVisible = true;
+       let isPageVisible = !document.hidden;
+       let videoTexture: THREE.VideoTexture | null = null;
+       let videoElement: HTMLVideoElement | null = null;
+       let screenTextureMaterial: THREE.Material | null = null;
+       let pointerX = 0;
+       let pointerY = 0;
 
-      const screenMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        side: THREE.DoubleSide,
-        toneMapped: false
-      });
+       const shouldAnimate = () => isSceneVisible && isPageVisible;
 
-      let animationFrame = 0;
-      let isAnimating = false;
-      let isSceneVisible = true;
-      let isPageVisible = !document.hidden;
-      let videoTexture: THREE.VideoTexture | null = null;
-      let videoElement: HTMLVideoElement | null = null;
-      let screenTextureMaterial: THREE.Material | null = null;
-      let pointerX = 0;
-      let pointerY = 0;
-      let laptopBaseRotationX = -0.12;
-      let laptopBaseRotationY = -0.46;
-      let laptopBaseY = -0.08;
+       const tuneLaptopMaterial = (material: THREE.MeshStandardMaterial) => {
+         const tunedMaterial = material.clone();
+         if ('envMapIntensity' in tunedMaterial) tunedMaterial.envMapIntensity = 0.95;
+         if ('roughness' in tunedMaterial) tunedMaterial.roughness = Math.max(tunedMaterial.roughness ?? 0.35, 0.34);
+         if ('metalness' in tunedMaterial) tunedMaterial.metalness = Math.max(tunedMaterial.metalness ?? 0.2, 0.32);
+         if ('color' in tunedMaterial && tunedMaterial.color instanceof THREE.Color) {
+           tunedMaterial.color.lerp(new THREE.Color(0x1b2026), 0.18);
+         }
+         return tunedMaterial;
+       };
 
-      const shouldAnimate = () => isSceneVisible && isPageVisible;
+const resize = () => {
+         const { width, height } = root.getBoundingClientRect();
+         renderer.setSize(width, height, false);
+         camera.aspect = width / Math.max(height, 1);
+         camera.position.set(-0.8, 0.6, 2.8);
+         camera.lookAt(0, 0.2, 0);
+         camera.updateProjectionMatrix();
+       };
 
-      const tuneLaptopMaterial = (material: THREE.Material) => {
-        const tunedMaterial = material.clone();
-        const standardMaterial = tunedMaterial as THREE.MeshStandardMaterial;
+       const frame = () => {
+         if (!shouldAnimate()) {
+           isAnimating = false;
+           return;
+         }
 
-        if ('envMapIntensity' in standardMaterial) standardMaterial.envMapIntensity = 0.95;
-        if ('roughness' in standardMaterial) standardMaterial.roughness = Math.max(standardMaterial.roughness ?? 0.35, 0.34);
-        if ('metalness' in standardMaterial) standardMaterial.metalness = Math.max(standardMaterial.metalness ?? 0.2, 0.32);
-        if ('color' in standardMaterial && standardMaterial.color instanceof THREE.Color) {
-          const brightness = Math.max(standardMaterial.color.r, standardMaterial.color.g, standardMaterial.color.b);
-          if (brightness > 0.72 && !standardMaterial.map) {
-            standardMaterial.color.set(0x2b3037);
-          } else {
-            standardMaterial.color.lerp(new THREE.Color(0x1b2026), 0.18);
-          }
-        }
-
-        return tunedMaterial;
-      };
-
-      const resize = () => {
-        const { width, height } = root.getBoundingClientRect();
-        const isCompact = width < 640;
-        renderer.setSize(width, height, false);
-        camera.aspect = width / Math.max(height, 1);
-        camera.fov = isCompact ? 40 : 34;
-        camera.position.set(isCompact ? -0.56 : -0.78, isCompact ? 0.52 : 0.58, isCompact ? 2.95 : 3.45);
-        camera.lookAt(isCompact ? -0.08 : -0.14, isCompact ? 0.2 : 0.18, 0.0);
-        camera.updateProjectionMatrix();
-        laptopGroup.position.x = isCompact ? -0.02 : -0.1;
-      };
-
-      const frame = () => {
-        if (!shouldAnimate()) {
-          isAnimating = false;
-          return;
-        }
-
-        animationFrame = window.requestAnimationFrame(frame);
-        const time = performance.now() * 0.001;
-        const targetRotationY = laptopBaseRotationY + pointerX * 0.018 + Math.sin(time * 0.32) * 0.006;
-        const targetRotationX = laptopBaseRotationX + pointerY * 0.01 + Math.sin(time * 0.28) * 0.004;
-        laptopGroup.rotation.y += (targetRotationY - laptopGroup.rotation.y) * 0.04;
-        laptopGroup.rotation.x += (targetRotationX - laptopGroup.rotation.x) * 0.04;
-        laptopGroup.position.y = laptopBaseY + Math.sin(time * 0.28) * 0.004;
-        renderer.render(scene, camera);
-      };
+         animationFrame = window.requestAnimationFrame(frame);
+         const time = performance.now() * 0.001;
+         laptopGroup.rotation.y += (pointerX * 0.02 + Math.sin(time * 0.32) * 0.006 - laptopGroup.rotation.y) * 0.04;
+         laptopGroup.rotation.x += (pointerY * 0.015 + Math.sin(time * 0.28) * 0.004 - laptopGroup.rotation.x) * 0.04;
+         laptopGroup.position.y = Math.sin(time * 0.28) * 0.004;
+         renderer.render(scene, camera);
+       };
 
       const startFrame = () => {
         if (isAnimating || !shouldAnimate()) return;
@@ -1109,126 +747,107 @@ document.addEventListener('astro:before-swap', () => {
         isAnimating = false;
       };
 
-      const loader = new GLTFLoader();
-      loader.load(
-        modelSrc,
-        (gltf) => {
-          const model = gltf.scene;
-          model.updateMatrixWorld(true);
+       // Load model only when element is visible to improve initial load performance
+       const loadModel = () => {
+         const loader = new GLTFLoader();
+         loader.load(
+           modelSrc,
+           (gltf) => {
+             const model = gltf.scene;
+             model.updateMatrixWorld(true);
 
-          videoElement = document.createElement('video');
-          videoElement.src = '/assets/videos/laptop-screen.mp4';
-          videoElement.muted = true;
-          videoElement.loop = true;
-          videoElement.playsInline = true;
-          videoElement.preload = 'auto';
+             videoElement = document.createElement('video');
+             videoElement.src = '/assets/videos/pc-screen.mp4';
+             videoElement.muted = true;
+             videoElement.loop = true;
+             videoElement.playsInline = true;
+             videoElement.preload = 'auto';
 
-          model.traverse((object) => {
-            const meshCandidate = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
+             model.traverse((object) => {
+               const meshCandidate = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
 
-            if (!meshCandidate.isMesh) return;
+               if (!meshCandidate.isMesh) return;
 
-            const normalizedName = object.name.toLowerCase().replace(/[\s-]+/g, '_');
-            const meshBox = new THREE.Box3().setFromObject(object);
-            const meshSize = meshBox.getSize(new THREE.Vector3());
-            const meshCenter = meshBox.getCenter(new THREE.Vector3());
-            const largestSide = Math.max(meshSize.x, meshSize.y, meshSize.z);
-            const isOutsideLaptopCluster =
-              largestSide > 8 ||
-              Math.abs(meshCenter.x) > 7 ||
-              meshCenter.y < 2.5 ||
-              meshCenter.y > 6.5 ||
-              meshCenter.z < -3 ||
-              meshCenter.z > 5;
+               meshCandidate.castShadow = true;
+               meshCandidate.receiveShadow = true;
 
-            if (isOutsideLaptopCluster) {
-              object.visible = false;
-              return;
-            }
+               const normalizedName = object.name.toLowerCase().replace(/[\s-]+/g, '_');
 
-            meshCandidate.castShadow = true;
-            meshCandidate.receiveShadow = true;
+               if (
+                 normalizedName.includes('screen') ||
+                 normalizedName.includes('display')
+               ) {
+                 meshCandidate.castShadow = false;
+                 meshCandidate.receiveShadow = false;
+                 meshCandidate.material = screenMaterial;
+                 screenTextureMaterial = screenMaterial;
+                 return;
+               }
 
-            if (
-              normalizedName.includes('screen') ||
-              normalizedName.includes('display') ||
-              object.parent?.name.toLowerCase().includes('change_image_here')
-            ) {
-              meshCandidate.castShadow = false;
-              meshCandidate.receiveShadow = false;
-              meshCandidate.material = screenMaterial;
-              screenTextureMaterial = screenMaterial;
-              return;
-            }
+               meshCandidate.material = Array.isArray(meshCandidate.material)
+                 ? meshCandidate.material.map(tuneLaptopMaterial)
+                 : tuneLaptopMaterial(meshCandidate.material);
+             });
 
-            meshCandidate.material = Array.isArray(meshCandidate.material)
-              ? meshCandidate.material.map(tuneLaptopMaterial)
-              : tuneLaptopMaterial(meshCandidate.material);
-          });
+             const box = new THREE.Box3();
+             model.traverse((object) => {
+               const meshCandidate = object as THREE.Object3D & { isMesh?: boolean };
+               if (meshCandidate.isMesh && object.visible) box.expandByObject(object);
+             });
+             const size = box.getSize(new THREE.Vector3());
+             const center = box.getCenter(new THREE.Vector3());
+             const maxAxis = Math.max(size.x, size.y, size.z);
+             const modelScale = 3.35 / Math.max(maxAxis, 1);
 
-          const box = new THREE.Box3();
-          model.traverse((object) => {
-            const meshCandidate = object as THREE.Object3D & { isMesh?: boolean };
-            if (meshCandidate.isMesh && object.visible) box.expandByObject(object);
-          });
-          const size = box.getSize(new THREE.Vector3());
-          const center = box.getCenter(new THREE.Vector3());
-          const maxAxis = Math.max(size.x, size.y, size.z);
-          const modelScale = 3.35 / Math.max(maxAxis, 1);
+ model.scale.setScalar(modelScale);
+             model.position.set(-center.x * modelScale, -center.y * modelScale, -center.z * modelScale);
+             laptopGroup.add(model);
+             laptopGroup.rotation.set(-0.15, -0.4, 0);
 
-          model.scale.setScalar(modelScale);
-          model.position.set(-center.x * modelScale, -center.y * modelScale, -center.z * modelScale);
-          laptopGroup.add(model);
-          laptopBaseRotationX = -0.12;
-          laptopBaseRotationY = -0.46;
-          laptopBaseY = -0.08;
-          laptopGroup.rotation.set(laptopBaseRotationX, laptopBaseRotationY, 0.01);
-          laptopGroup.position.set(-0.1, laptopBaseY, 0.1);
+             videoElement.addEventListener('loadeddata', () => {
+              videoTexture = new THREE.VideoTexture(videoElement!);
+              videoTexture.colorSpace = THREE.SRGBColorSpace;
+              videoTexture.flipY = false;
+              videoTexture.minFilter = THREE.LinearFilter;
+              videoTexture.magFilter = THREE.LinearFilter;
+              videoTexture.generateMipmaps = false;
+              videoTexture.wrapS = THREE.RepeatWrapping;
+              videoTexture.wrapT = THREE.RepeatWrapping;
+              videoTexture.repeat.set(1, -1);
+              videoTexture.offset.set(0, 1);
+              videoTexture.rotation = 0;
 
-           const contactShadow = new THREE.Mesh(
-             new THREE.CircleGeometry(2.2, 64),
-             new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.45 })
-           );
-           contactShadow.rotation.x = -Math.PI / 2;
-           contactShadow.position.set(-0.06, -1.0, 0.28);
-           contactShadow.scale.set(1.35, 0.5, 1);
-           contactShadow.receiveShadow = true;
-           scene.add(contactShadow);
+              if (screenTextureMaterial === screenMaterial) {
+                screenMaterial.map?.dispose();
+                screenMaterial.map = videoTexture;
+                screenMaterial.needsUpdate = true;
+              }
 
-          videoElement.addEventListener('loadeddata', () => {
-            videoTexture = new THREE.VideoTexture(videoElement!);
-            videoTexture.colorSpace = THREE.SRGBColorSpace;
-            videoTexture.flipY = false;
-            videoTexture.minFilter = THREE.LinearFilter;
-            videoTexture.magFilter = THREE.LinearFilter;
-            videoTexture.generateMipmaps = false;
-            videoTexture.wrapS = THREE.RepeatWrapping;
-            videoTexture.wrapT = THREE.RepeatWrapping;
-            videoTexture.repeat.set(1, -1);
-            videoTexture.offset.set(0, 1);
-            videoTexture.rotation = 0;
+              if (shouldAnimate()) {
+                void videoElement!.play().catch(() => undefined);
+              }
+             }, { once: true });
 
-            if (screenTextureMaterial === screenMaterial) {
-              screenMaterial.map?.dispose();
-              screenMaterial.map = videoTexture;
-              screenMaterial.needsUpdate = true;
-            }
+             videoElement.load();
+             root.classList.add('is-loaded');
+             resize();
+             startFrame();
+           },
+           undefined,
+           () => {
+             root.classList.add('has-failed');
+           }
+         );
+       };
 
-            if (shouldAnimate()) {
-              void videoElement!.play().catch(() => undefined);
-            }
-          }, { once: true });
-
-          videoElement.load();
-          root.classList.add('is-loaded');
-          resize();
-          startFrame();
-        },
-        undefined,
-        () => {
-          root.classList.add('has-failed');
-        }
-      );
+       // Start loading when element enters viewport
+       const loadObserver = new IntersectionObserver(([entry]) => {
+         if (entry.isIntersecting) {
+           loadModel();
+           loadObserver.disconnect(); // Only load once
+         }
+       }, { rootMargin: '50px' }); // Start loading when 50px away from viewport
+       loadObserver.observe(root);
 
       const resizeObserver = new ResizeObserver(resize);
       resizeObserver.observe(root);
