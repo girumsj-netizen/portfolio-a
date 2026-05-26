@@ -333,11 +333,13 @@ const canonical = 'https://yourdomain.com';
     screenVideo.loop = true;
     screenVideo.playsInline = true;
     screenVideo.preload = 'auto';
-    const screenMaterial = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      side: THREE.DoubleSide,
-      toneMapped: false
-    });
+       const screenMaterial = new THREE.MeshBasicMaterial({
+         color: 0xffffff,
+         side: THREE.DoubleSide,
+         toneMapped: false,
+         depthTest: false,
+         depthWrite: false
+       });
     const bodyMaterial = new THREE.MeshStandardMaterial({
       color: 0x191d20,
       metalness: 0.92,
@@ -649,205 +651,158 @@ document.addEventListener('astro:before-swap', () => {
     laptopScenes.forEach((root) => {
       const canvas = root.querySelector('canvas');
       const modelSrc = root.dataset.modelSrc;
-
       if (!canvas || !modelSrc) return;
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-      const renderer = new THREE.WebGLRenderer({
-        canvas,
-        alpha: true,
-        antialias: true,
-        powerPreference: 'high-performance'
-      });
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.12;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-       renderer.toneMappingExposure = 1.12;
-       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-       renderer.shadowMap.enabled = true;
-       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      const environmentMap = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+      scene.environment = environmentMap;
+      pmremGenerator.dispose();
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x404040, 1.2));
+      const keyLight = new THREE.DirectionalLight(0xfff2dd, 1.8);
+      keyLight.position.set(2, 3, 2);
+      keyLight.castShadow = true;
+      scene.add(keyLight);
+      const laptopGroup = new THREE.Group();
+      scene.add(laptopGroup);
 
-       const pmremGenerator = new THREE.PMREMGenerator(renderer);
-       const environmentMap = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-       scene.environment = environmentMap;
-       pmremGenerator.dispose();
+      // SHARED screen material — all textured meshes get this same instance
+      // depthTest: false ensures it renders on top of other layers
+      const screenMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, toneMapped: false, depthTest: false, depthWrite: false });
 
-       scene.add(new THREE.HemisphereLight(0xffffff, 0x404040, 1.2));
+      let animationFrame = 0;
+      let isAnimating = false;
+      let isSceneVisible = true;
+      let isPageVisible = !document.hidden;
+      let videoTexture: THREE.VideoTexture | null = null;
+      let videoElement: HTMLVideoElement | null = null;
+      let pointerX = 0;
+      let pointerY = 0;
+      const shouldAnimate = () => isSceneVisible && isPageVisible;
 
-       const keyLight = new THREE.DirectionalLight(0xfff2dd, 1.8);
-       keyLight.position.set(2, 3, 2);
-       keyLight.castShadow = true;
-       scene.add(keyLight);
+      const tuneLaptopMaterial = (material: THREE.MeshStandardMaterial) => {
+        const tunedMaterial = material.clone();
+        if ('envMapIntensity' in tunedMaterial) tunedMaterial.envMapIntensity = 0.95;
+        if ('roughness' in tunedMaterial) tunedMaterial.roughness = Math.max(tunedMaterial.roughness ?? 0.35, 0.34);
+        if ('metalness' in tunedMaterial) tunedMaterial.metalness = Math.max(tunedMaterial.metalness ?? 0.2, 0.32);
+        if ('color' in tunedMaterial && tunedMaterial.color instanceof THREE.Color) {
+          tunedMaterial.color.lerp(new THREE.Color(0x1b2026), 0.18);
+        }
+        return tunedMaterial;
+      };
 
-       const laptopGroup = new THREE.Group();
-       scene.add(laptopGroup);
+      const resize = () => {
+        const { width, height } = root.getBoundingClientRect();
+        renderer.setSize(width, height, false);
+        camera.aspect = width / Math.max(height, 1);
+        camera.position.set(-0.8, 0.6, 2.8);
+        camera.lookAt(0, 0.2, 0);
+        camera.updateProjectionMatrix();
+      };
 
-       const screenMaterial = new THREE.MeshBasicMaterial({
-         color: 0xffffff,
-         side: THREE.DoubleSide,
-         toneMapped: false
-       });
-
-       let animationFrame = 0;
-       let isAnimating = false;
-       let isSceneVisible = true;
-       let isPageVisible = !document.hidden;
-       let videoTexture: THREE.VideoTexture | null = null;
-       let videoElement: HTMLVideoElement | null = null;
-       let screenTextureMaterial: THREE.Material | null = null;
-       let pointerX = 0;
-       let pointerY = 0;
-
-       const shouldAnimate = () => isSceneVisible && isPageVisible;
-
-       const tuneLaptopMaterial = (material: THREE.MeshStandardMaterial) => {
-         const tunedMaterial = material.clone();
-         if ('envMapIntensity' in tunedMaterial) tunedMaterial.envMapIntensity = 0.95;
-         if ('roughness' in tunedMaterial) tunedMaterial.roughness = Math.max(tunedMaterial.roughness ?? 0.35, 0.34);
-         if ('metalness' in tunedMaterial) tunedMaterial.metalness = Math.max(tunedMaterial.metalness ?? 0.2, 0.32);
-         if ('color' in tunedMaterial && tunedMaterial.color instanceof THREE.Color) {
-           tunedMaterial.color.lerp(new THREE.Color(0x1b2026), 0.18);
-         }
-         return tunedMaterial;
-       };
-
-const resize = () => {
-         const { width, height } = root.getBoundingClientRect();
-         renderer.setSize(width, height, false);
-         camera.aspect = width / Math.max(height, 1);
-         camera.position.set(-0.8, 0.6, 2.8);
-         camera.lookAt(0, 0.2, 0);
-         camera.updateProjectionMatrix();
-       };
-
-       const frame = () => {
-         if (!shouldAnimate()) {
-           isAnimating = false;
-           return;
-         }
-
-         animationFrame = window.requestAnimationFrame(frame);
-         const time = performance.now() * 0.001;
-         laptopGroup.rotation.y += (pointerX * 0.02 + Math.sin(time * 0.32) * 0.006 - laptopGroup.rotation.y) * 0.04;
-         laptopGroup.rotation.x += (pointerY * 0.015 + Math.sin(time * 0.28) * 0.004 - laptopGroup.rotation.x) * 0.04;
-         laptopGroup.position.y = Math.sin(time * 0.28) * 0.004;
-         renderer.render(scene, camera);
-       };
-
-      const startFrame = () => {
-        if (isAnimating || !shouldAnimate()) return;
-        isAnimating = true;
+      const frame = () => {
+        if (!shouldAnimate()) { isAnimating = false; return; }
         animationFrame = window.requestAnimationFrame(frame);
+        const time = performance.now() * 0.001;
+        laptopGroup.rotation.y += (pointerX * 0.02 + Math.sin(time * 0.32) * 0.006 - laptopGroup.rotation.y) * 0.04;
+        laptopGroup.rotation.x += (pointerY * 0.015 + Math.sin(time * 0.28) * 0.004 - laptopGroup.rotation.x) * 0.04;
+        laptopGroup.position.y = Math.sin(time * 0.28) * 0.004;
+        renderer.render(scene, camera);
       };
 
-      const stopFrame = () => {
-        if (!isAnimating) return;
-        window.cancelAnimationFrame(animationFrame);
-        isAnimating = false;
-      };
+      const startFrame = () => { if (isAnimating || !shouldAnimate()) return; isAnimating = true; animationFrame = window.requestAnimationFrame(frame); };
+      const stopFrame = () => { if (!isAnimating) return; window.cancelAnimationFrame(animationFrame); isAnimating = false; };
 
-       // Load model only when element is visible to improve initial load performance
-       const loadModel = () => {
-         const loader = new GLTFLoader();
-         loader.load(
-           modelSrc,
-           (gltf) => {
-             const model = gltf.scene;
-             model.updateMatrixWorld(true);
+      const loadModel = () => {
+        const loader = new GLTFLoader();
+        loader.load(modelSrc, (gltf) => {
+          const model = gltf.scene;
+          model.updateMatrixWorld(true);
 
-             videoElement = document.createElement('video');
-             videoElement.src = '/assets/videos/pc-screen.mp4';
-             videoElement.muted = true;
-             videoElement.loop = true;
-             videoElement.playsInline = true;
-             videoElement.preload = 'auto';
+          // Create video element
+          videoElement = document.createElement('video');
+          videoElement.src = '/assets/videos/pc-screen.mp4';
+          videoElement.muted = true;
+          videoElement.loop = true;
+          videoElement.playsInline = true;
+          videoElement.preload = 'auto';
+          videoElement.style.display = 'none';
+          videoElement.setAttribute('playsinline', '');
+          document.body.appendChild(videoElement);
 
-             model.traverse((object) => {
-               const meshCandidate = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
-
-               if (!meshCandidate.isMesh) return;
-
-               meshCandidate.castShadow = true;
-               meshCandidate.receiveShadow = true;
-
-               const normalizedName = object.name.toLowerCase().replace(/[\s-]+/g, '_');
-
-               if (
-                 normalizedName.includes('screen') ||
-                 normalizedName.includes('display')
-               ) {
-                 meshCandidate.castShadow = false;
-                 meshCandidate.receiveShadow = false;
-                 meshCandidate.material = screenMaterial;
-                 screenTextureMaterial = screenMaterial;
-                 return;
+           // TEST 6: Object 119 (to distinguish between 119 and 121)
+           model.traverse((object) => {
+             const mesh = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
+             if (!mesh.isMesh) return;
+             const name = object.name.toLowerCase().replace(/[\s-]+/g, '_');
+             const match = name.match(/object_(\d+)/);
+             if (match) {
+               const num = parseInt(match[1], 10);
+               if (num === 119 && num % 2 === 1) {
+                 mesh.material = screenMaterial;
+                 mesh.castShadow = false;
+                 mesh.receiveShadow = false;
                }
+             }
+           });
 
-               meshCandidate.material = Array.isArray(meshCandidate.material)
-                 ? meshCandidate.material.map(tuneLaptopMaterial)
-                 : tuneLaptopMaterial(meshCandidate.material);
-             });
+          // Size and position model
+          const box = new THREE.Box3();
+          model.traverse((object) => {
+            const mesh = object as THREE.Object3D & { isMesh?: boolean };
+            if (mesh.isMesh && object.visible) box.expandByObject(object);
+          });
+          const size = box.getSize(new THREE.Vector3());
+          const center = box.getCenter(new THREE.Vector3());
+          const maxAxis = Math.max(size.x, size.y, size.z);
+          const modelScale = 3.35 / Math.max(maxAxis, 1);
+          model.scale.setScalar(modelScale);
+          model.position.set(-center.x * modelScale, -center.y * modelScale, -center.z * modelScale);
+          laptopGroup.add(model);
+          laptopGroup.rotation.set(-0.15, -0.4, 0);
 
-             const box = new THREE.Box3();
-             model.traverse((object) => {
-               const meshCandidate = object as THREE.Object3D & { isMesh?: boolean };
-               if (meshCandidate.isMesh && object.visible) box.expandByObject(object);
-             });
-             const size = box.getSize(new THREE.Vector3());
-             const center = box.getCenter(new THREE.Vector3());
-             const maxAxis = Math.max(size.x, size.y, size.z);
-             const modelScale = 3.35 / Math.max(maxAxis, 1);
+          // When video loads, set it as the map on the shared screenMaterial
+          videoElement.addEventListener('loadeddata', () => {
+            videoTexture = new THREE.VideoTexture(videoElement!);
+            videoTexture.colorSpace = THREE.SRGBColorSpace;
+            videoTexture.flipY = false;
+            videoTexture.minFilter = THREE.LinearFilter;
+            videoTexture.magFilter = THREE.LinearFilter;
+            videoTexture.generateMipmaps = false;
+            videoTexture.wrapS = THREE.RepeatWrapping;
+            videoTexture.wrapT = THREE.RepeatWrapping;
+            videoTexture.repeat.set(1, -1);
+            videoTexture.offset.set(0, 1);
+            videoTexture.rotation = 0;
 
- model.scale.setScalar(modelScale);
-             model.position.set(-center.x * modelScale, -center.y * modelScale, -center.z * modelScale);
-             laptopGroup.add(model);
-             laptopGroup.rotation.set(-0.15, -0.4, 0);
+            // Since all textured meshes SHARE screenMaterial, this one update affects all
+            screenMaterial.map?.dispose();
+            screenMaterial.map = videoTexture;
+            screenMaterial.needsUpdate = true;
 
-             videoElement.addEventListener('loadeddata', () => {
-              videoTexture = new THREE.VideoTexture(videoElement!);
-              videoTexture.colorSpace = THREE.SRGBColorSpace;
-              videoTexture.flipY = false;
-              videoTexture.minFilter = THREE.LinearFilter;
-              videoTexture.magFilter = THREE.LinearFilter;
-              videoTexture.generateMipmaps = false;
-              videoTexture.wrapS = THREE.RepeatWrapping;
-              videoTexture.wrapT = THREE.RepeatWrapping;
-              videoTexture.repeat.set(1, -1);
-              videoTexture.offset.set(0, 1);
-              videoTexture.rotation = 0;
+            if (shouldAnimate()) void videoElement!.play().catch(() => undefined);
+          }, { once: true });
 
-              if (screenTextureMaterial === screenMaterial) {
-                screenMaterial.map?.dispose();
-                screenMaterial.map = videoTexture;
-                screenMaterial.needsUpdate = true;
-              }
+          videoElement.load();
+          root.classList.add('is-loaded');
+          resize();
+          startFrame();
+        }, undefined, () => { root.classList.add('has-failed'); });
+      };
 
-              if (shouldAnimate()) {
-                void videoElement!.play().catch(() => undefined);
-              }
-             }, { once: true });
-
-             videoElement.load();
-             root.classList.add('is-loaded');
-             resize();
-             startFrame();
-           },
-           undefined,
-           () => {
-             root.classList.add('has-failed');
-           }
-         );
-       };
-
-       // Start loading when element enters viewport
-       const loadObserver = new IntersectionObserver(([entry]) => {
-         if (entry.isIntersecting) {
-           loadModel();
-           loadObserver.disconnect(); // Only load once
-         }
-       }, { rootMargin: '50px' }); // Start loading when 50px away from viewport
-       loadObserver.observe(root);
+      const loadObserver = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) { loadModel(); loadObserver.disconnect(); }
+      }, { rootMargin: '50px' });
+      loadObserver.observe(root);
 
       const resizeObserver = new ResizeObserver(resize);
       resizeObserver.observe(root);
@@ -857,33 +812,19 @@ const resize = () => {
         pointerX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
         pointerY = -(((event.clientY - rect.top) / rect.height - 0.5) * 2);
       });
-
-      root.addEventListener('pointerleave', () => {
-        pointerX = 0;
-        pointerY = 0;
-      });
+      root.addEventListener('pointerleave', () => { pointerX = 0; pointerY = 0; });
 
       const visibilityObserver = new IntersectionObserver(([entry]) => {
         isSceneVisible = entry.isIntersecting;
-        if (shouldAnimate()) {
-          startFrame();
-          if (videoTexture && videoElement) void videoElement.play().catch(() => undefined);
-        } else {
-          stopFrame();
-          videoElement?.pause();
-        }
+        if (shouldAnimate()) { startFrame(); if (videoTexture && videoElement) void videoElement.play().catch(() => undefined); }
+        else { stopFrame(); videoElement?.pause(); }
       }, { threshold: 0.05 });
       visibilityObserver.observe(root);
 
       document.addEventListener('visibilitychange', () => {
         isPageVisible = !document.hidden;
-        if (shouldAnimate()) {
-          startFrame();
-          if (videoTexture && videoElement) void videoElement.play().catch(() => undefined);
-        } else {
-          stopFrame();
-          videoElement?.pause();
-        }
+        if (shouldAnimate()) { startFrame(); if (videoTexture && videoElement) void videoElement.play().catch(() => undefined); }
+        else { stopFrame(); videoElement?.pause(); }
       });
 
       document.addEventListener('astro:before-swap', () => {
