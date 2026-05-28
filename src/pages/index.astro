@@ -755,9 +755,10 @@ const canonical = 'https://yourdomain.com';
           videoTexture.minFilter = THREE.LinearFilter;
           videoTexture.magFilter = THREE.LinearFilter;
           videoTexture.generateMipmaps = false;
-          videoTexture.wrapT = THREE.RepeatWrapping;
-          videoTexture.repeat.y = -1;
-          videoTexture.offset.y = 1;
+          videoTexture.wrapS = THREE.ClampToEdgeWrapping;
+          videoTexture.wrapT = THREE.ClampToEdgeWrapping;
+          videoTexture.repeat.set(1, 1);
+          videoTexture.offset.set(0, 0);
           videoTexture.rotation = 0;
 
           // Since all textured meshes SHARE screenMaterial, one update affects all
