@@ -276,20 +276,19 @@ const canonical = 'https://yourdomain.com';
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-     const renderer = new THREE.WebGLRenderer({
-       canvas,
-       alpha: true,
-       antialias: true,
-       powerPreference: 'high-performance'
-     });
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
 
-     renderer.outputColorSpace = THREE.SRGBColorSpace;
-     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-     renderer.toneMappingExposure = 1.08;
-     renderer.shadowMap.enabled = true;
-     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-     // Reduced pixel ratio for better performance on mobile devices
-     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
 
     const makeScreenTexture = (source: HTMLImageElement) => {
       const safeTop = Math.round(source.height * 0.04);
@@ -333,13 +332,11 @@ const canonical = 'https://yourdomain.com';
     screenVideo.loop = true;
     screenVideo.playsInline = true;
     screenVideo.preload = 'auto';
-       const screenMaterial = new THREE.MeshBasicMaterial({
-         color: 0xffffff,
-         side: THREE.DoubleSide,
-         toneMapped: false,
-         depthTest: false,
-         depthWrite: false
-       });
+    const screenMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      side: THREE.DoubleSide,
+      toneMapped: false
+    });
     const bodyMaterial = new THREE.MeshStandardMaterial({
       color: 0x191d20,
       metalness: 0.92,
@@ -389,29 +386,30 @@ const canonical = 'https://yourdomain.com';
       screenMaterial.needsUpdate = true;
     };
 
-      const ambientLight = new THREE.AmbientLight(0x404060, 0.6);
-      scene.add(ambientLight);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 4.4);
+    keyLight.position.set(4.5, 5.5, 6);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(1024, 1024);
+    keyLight.shadow.camera.near = 0.5;
+    keyLight.shadow.camera.far = 18;
+    keyLight.shadow.camera.left = -5;
+    keyLight.shadow.camera.right = 5;
+    keyLight.shadow.camera.top = 5;
+    keyLight.shadow.camera.bottom = -5;
+    scene.add(keyLight);
+    scene.add(new THREE.HemisphereLight(0xb9fff1, 0x05070d, 1.35));
 
-      const keyLight = new THREE.DirectionalLight(0xffeedd, 8);
-      keyLight.position.set(-3.5, 8, 4);
-      keyLight.castShadow = true;
-      keyLight.shadow.mapSize.set(1024, 1024);
-      keyLight.shadow.camera.near = 0.5;
-      keyLight.shadow.camera.far = 18;
-      keyLight.shadow.camera.left = -5;
-      keyLight.shadow.camera.right = 5;
-      keyLight.shadow.camera.top = 5;
-      keyLight.shadow.camera.bottom = -5;
-      scene.add(keyLight);
-      scene.add(new THREE.HemisphereLight(0x87ceeb, 0x3a2a1a, 3.5));
+    const fillLight = new THREE.PointLight(0x00b37e, 10, 12);
+    fillLight.position.set(-3.2, 1.2, 3.4);
+    scene.add(fillLight);
 
-      const fillLight = new THREE.DirectionalLight(0xcceeff, 2.5);
-      fillLight.position.set(3, 2, 5);
-      scene.add(fillLight);
+    const rimLight = new THREE.PointLight(0x9af7ff, 32, 9);
+    rimLight.position.set(-3.8, 2.7, -2.5);
+    scene.add(rimLight);
 
-      const rimLight = new THREE.DirectionalLight(0xffeedd, 3);
-      rimLight.position.set(-2, 4, -6);
-      scene.add(rimLight);
+    const edgeLight = new THREE.DirectionalLight(0xdff7ff, 1.45);
+    edgeLight.position.set(-2, 3, 3.5);
+    scene.add(edgeLight);
 
     const shadowPlane = new THREE.Mesh(
       new THREE.CircleGeometry(2.25, 48),
@@ -458,29 +456,29 @@ const canonical = 'https://yourdomain.com';
       isAnimating = false;
     };
 
-       const resize = () => {
-         const { width, height } = root.getBoundingClientRect();
-         renderer.setSize(width, height, false);
-         camera.aspect = width / Math.max(height, 1);
-         // Camera positioning is now handled in model loading to focus on screen
-         camera.updateProjectionMatrix();
-       };
+    const resize = () => {
+      const { width, height } = root.getBoundingClientRect();
+      renderer.setSize(width, height, false);
+      camera.aspect = width / Math.max(height, 1);
+      camera.position.set(0, 0.05, width < 560 ? 7 : 6.25);
+      camera.updateProjectionMatrix();
+    };
 
-const frame = () => {
-        if (!shouldAnimate()) {
-          isAnimating = false;
-          return;
-        }
+    const frame = () => {
+      if (!shouldAnimate()) {
+        isAnimating = false;
+        return;
+      }
 
-        animationFrame = window.requestAnimationFrame(frame);
-        const time = performance.now() * 0.001;
+      animationFrame = window.requestAnimationFrame(frame);
+      const time = performance.now() * 0.001;
 
-        phoneGroup.rotation.y += ((-0.35 + pointerX * 0.22) - phoneGroup.rotation.y) * 0.05;
-        phoneGroup.rotation.x += ((-0.08 + pointerY * 0.12) - phoneGroup.rotation.x) * 0.05;
-        phoneGroup.position.y = 0.28 + Math.sin(time * 1.35) * 0.06;
+      phoneGroup.rotation.y += ((-0.35 + pointerX * 0.22) - phoneGroup.rotation.y) * 0.05;
+      phoneGroup.rotation.x += ((-0.08 + pointerY * 0.12) - phoneGroup.rotation.x) * 0.05;
+      phoneGroup.position.y = 0.28 + Math.sin(time * 1.35) * 0.06;
 
-        renderer.render(scene, camera);
-      };
+      renderer.render(scene, camera);
+    };
 
     const startFrame = () => {
       if (isAnimating || !shouldAnimate()) {
@@ -509,99 +507,87 @@ const frame = () => {
       pointerY = 0;
     });
 
-    // Load model only when element is visible to improve initial load performance
-    const loadModel = () => {
-      loader.load(
-        modelSrc,
-        (gltf) => {
-          model = gltf.scene;
+    loader.load(
+      modelSrc,
+      (gltf) => {
+        model = gltf.scene;
 
-          model.traverse((object) => {
-            if (object.name.toLowerCase() === 'floor') {
-              object.visible = false;
-            }
-
-            const meshCandidate = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
-            const meshName = object.name.toLowerCase();
-            const parentName = object.parent?.name.toLowerCase() ?? '';
-            const normalizedName = meshName.replace(/[\s-]+/g, '_');
-            const normalizedParentName = parentName.replace(/[\s-]+/g, '_');
-
-            if (meshCandidate.isMesh && meshName === 'screen') {
-              meshCandidate.castShadow = false;
-              meshCandidate.receiveShadow = false;
-              meshCandidate.material = screenMaterial;
-              return;
-            }
-
-            if (
-              meshCandidate.isMesh &&
-              (
-                normalizedName === 'screen_border' ||
-                normalizedParentName.includes('dynamic_island') ||
-                normalizedParentName.includes('camera') ||
-                normalizedParentName.includes('cam') ||
-                normalizedName.includes('cam')
-              )
-            ) {
-              meshCandidate.castShadow = true;
-              meshCandidate.receiveShadow = true;
-              meshCandidate.material = blackGlassMaterial;
-              return;
-            }
-
-            if (meshCandidate.isMesh && normalizedName === 'back_side') {
-              meshCandidate.castShadow = true;
-              meshCandidate.receiveShadow = true;
-              meshCandidate.material = backMaterial;
-              return;
-            }
-
-            if (meshCandidate.isMesh) {
-              meshCandidate.castShadow = true;
-              meshCandidate.receiveShadow = true;
-              meshCandidate.material = bodyMaterial;
-            }
-          });
-
-          const box = new THREE.Box3();
-          model.traverse((object) => {
-            const meshCandidate = object as THREE.Object3D & { isMesh?: boolean };
-
-            if (meshCandidate.isMesh && object.visible) {
-              box.expandByObject(object);
-            }
-          });
-
-          if (box.isEmpty()) {
-            box.setFromObject(model);
+        model.traverse((object) => {
+          if (object.name.toLowerCase() === 'floor') {
+            object.visible = false;
           }
 
-          const size = box.getSize(new THREE.Vector3());
-          const center = box.getCenter(new THREE.Vector3());
-          const maxAxis = Math.max(size.x, size.y, size.z);
-          const scale = 3.05 / Math.max(maxAxis, 1);
+          const meshCandidate = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
+          const meshName = object.name.toLowerCase();
+          const parentName = object.parent?.name.toLowerCase() ?? '';
+          const normalizedName = meshName.replace(/[\s-]+/g, '_');
+          const normalizedParentName = parentName.replace(/[\s-]+/g, '_');
 
-          model.scale.setScalar(scale);
-          model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
-          phoneGroup.add(model);
-          root.classList.add('is-loaded');
-        },
-        undefined,
-        () => {
-          root.classList.add('has-failed');
+          if (meshCandidate.isMesh && meshName === 'screen') {
+            meshCandidate.castShadow = false;
+            meshCandidate.receiveShadow = false;
+            meshCandidate.material = screenMaterial;
+            return;
+          }
+
+          if (
+            meshCandidate.isMesh &&
+            (
+              normalizedName === 'screen_border' ||
+              normalizedParentName.includes('dynamic_island') ||
+              normalizedParentName.includes('camera') ||
+              normalizedParentName.includes('cam') ||
+              normalizedName.includes('cam')
+            )
+          ) {
+            meshCandidate.castShadow = true;
+            meshCandidate.receiveShadow = true;
+            meshCandidate.material = blackGlassMaterial;
+            return;
+          }
+
+          if (meshCandidate.isMesh && normalizedName === 'back_side') {
+            meshCandidate.castShadow = true;
+            meshCandidate.receiveShadow = true;
+            meshCandidate.material = backMaterial;
+            return;
+          }
+
+          if (meshCandidate.isMesh) {
+            meshCandidate.castShadow = true;
+            meshCandidate.receiveShadow = true;
+            meshCandidate.material = bodyMaterial;
+          }
+        });
+
+        const box = new THREE.Box3();
+        model.traverse((object) => {
+          const meshCandidate = object as THREE.Object3D & { isMesh?: boolean };
+
+          if (meshCandidate.isMesh && object.visible) {
+            box.expandByObject(object);
+          }
+        });
+
+        if (box.isEmpty()) {
+          box.setFromObject(model);
         }
-      );
-    };
 
-    // Start loading when element enters viewport
-    const loadObserver = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        loadModel();
-        loadObserver.disconnect(); // Only load once
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        const maxAxis = Math.max(size.x, size.y, size.z);
+        const scale = 3.05 / Math.max(maxAxis, 1);
+
+        model.scale.setScalar(scale);
+        model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+        phoneGroup.add(model);
+        root.classList.add('is-loaded');
+      },
+      undefined,
+      () => {
+        root.classList.add('has-failed');
       }
-    }, { rootMargin: '50px' }); // Start loading when 50px away from viewport
-    loadObserver.observe(root);
+    );
 
     resize();
     startFrame();
@@ -635,7 +621,7 @@ const frame = () => {
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-document.addEventListener('astro:before-swap', () => {
+    document.addEventListener('astro:before-swap', () => {
       stopFrame();
       observer.disconnect();
       visibilityObserver.disconnect();
@@ -645,198 +631,187 @@ document.addEventListener('astro:before-swap', () => {
       videoTexture?.dispose();
       renderer.dispose();
     }, { once: true });
+  });
 
-    // Laptop scene for AETHER case study
-    const laptopScenes = document.querySelectorAll<HTMLElement>('[data-laptop-scene]');
-    laptopScenes.forEach((root) => {
-      const canvas = root.querySelector('canvas');
-      const modelSrc = root.dataset.modelSrc;
-      if (!canvas || !modelSrc) return;
+  // Laptop scene for AETHER case study (separate from phone scene)
+  const laptopScenes = document.querySelectorAll<HTMLElement>('[data-laptop-scene]');
+  laptopScenes.forEach((root) => {
+    const canvas = root.querySelector('canvas');
+    const modelSrc = root.dataset.modelSrc;
+    if (!canvas || !modelSrc) return;
 
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.12;
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.12;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-      const pmremGenerator = new THREE.PMREMGenerator(renderer);
-      const environmentMap = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-      scene.environment = environmentMap;
-      pmremGenerator.dispose();
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x404040, 1.2));
-      const keyLight = new THREE.DirectionalLight(0xfff2dd, 1.8);
-      keyLight.position.set(2, 3, 2);
-      keyLight.castShadow = true;
-      scene.add(keyLight);
-      const laptopGroup = new THREE.Group();
-      scene.add(laptopGroup);
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    const environmentMap = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = environmentMap;
+    pmremGenerator.dispose();
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x404040, 1.2));
+    const keyLight = new THREE.DirectionalLight(0xfff2dd, 1.8);
+    keyLight.position.set(2, 3, 2);
+    keyLight.castShadow = true;
+    scene.add(keyLight);
+    const laptopGroup = new THREE.Group();
+    scene.add(laptopGroup);
 
-      // SHARED screen material — all textured meshes get this same instance
-      // depthTest: false ensures it renders on top of other layers
-      const screenMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, toneMapped: false, depthTest: false, depthWrite: false });
+    // SHARED screen material — all textured meshes get this same instance
+    const screenMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, toneMapped: false });
 
-      let animationFrame = 0;
-      let isAnimating = false;
-      let isSceneVisible = true;
-      let isPageVisible = !document.hidden;
-      let videoTexture: THREE.VideoTexture | null = null;
-      let videoElement: HTMLVideoElement | null = null;
-      let pointerX = 0;
-      let pointerY = 0;
-      const shouldAnimate = () => isSceneVisible && isPageVisible;
+    let animationFrame = 0;
+    let isAnimating = false;
+    let isSceneVisible = true;
+    let isPageVisible = !document.hidden;
+    let videoTexture: THREE.VideoTexture | null = null;
+    let videoElement: HTMLVideoElement | null = null;
+    let pointerX = 0;
+    let pointerY = 0;
+    const shouldAnimate = () => isSceneVisible && isPageVisible;
 
-      const tuneLaptopMaterial = (material: THREE.MeshStandardMaterial) => {
-        const tunedMaterial = material.clone();
-        if ('envMapIntensity' in tunedMaterial) tunedMaterial.envMapIntensity = 0.95;
-        if ('roughness' in tunedMaterial) tunedMaterial.roughness = Math.max(tunedMaterial.roughness ?? 0.35, 0.34);
-        if ('metalness' in tunedMaterial) tunedMaterial.metalness = Math.max(tunedMaterial.metalness ?? 0.2, 0.32);
-        if ('color' in tunedMaterial && tunedMaterial.color instanceof THREE.Color) {
-          tunedMaterial.color.lerp(new THREE.Color(0x1b2026), 0.18);
-        }
-        return tunedMaterial;
-      };
+    const resize = () => {
+      const { width, height } = root.getBoundingClientRect();
+      renderer.setSize(width, height, false);
+      camera.aspect = width / Math.max(height, 1);
+      camera.position.set(-0.8, 0.6, 2.8);
+      camera.lookAt(0, 0.2, 0);
+      camera.updateProjectionMatrix();
+    };
 
-      const resize = () => {
-        const { width, height } = root.getBoundingClientRect();
-        renderer.setSize(width, height, false);
-        camera.aspect = width / Math.max(height, 1);
-        camera.position.set(-0.8, 0.6, 2.8);
-        camera.lookAt(0, 0.2, 0);
-        camera.updateProjectionMatrix();
-      };
+    const frame = () => {
+      if (!shouldAnimate()) { isAnimating = false; return; }
+      animationFrame = window.requestAnimationFrame(frame);
+      const time = performance.now() * 0.001;
+      laptopGroup.rotation.y += (pointerX * 0.02 + Math.sin(time * 0.32) * 0.006 - laptopGroup.rotation.y) * 0.04;
+      laptopGroup.rotation.x += (pointerY * 0.015 + Math.sin(time * 0.28) * 0.004 - laptopGroup.rotation.x) * 0.04;
+      laptopGroup.position.y = Math.sin(time * 0.28) * 0.004;
+      if (videoTexture) videoTexture.needsUpdate = true;
+      renderer.render(scene, camera);
+    };
 
-      const frame = () => {
-        if (!shouldAnimate()) { isAnimating = false; return; }
-        animationFrame = window.requestAnimationFrame(frame);
-        const time = performance.now() * 0.001;
-        laptopGroup.rotation.y += (pointerX * 0.02 + Math.sin(time * 0.32) * 0.006 - laptopGroup.rotation.y) * 0.04;
-        laptopGroup.rotation.x += (pointerY * 0.015 + Math.sin(time * 0.28) * 0.004 - laptopGroup.rotation.x) * 0.04;
-        laptopGroup.position.y = Math.sin(time * 0.28) * 0.004;
-        renderer.render(scene, camera);
-      };
+    const startFrame = () => { if (isAnimating || !shouldAnimate()) return; isAnimating = true; animationFrame = window.requestAnimationFrame(frame); };
+    const stopFrame = () => { if (!isAnimating) return; window.cancelAnimationFrame(animationFrame); isAnimating = false; };
 
-      const startFrame = () => { if (isAnimating || !shouldAnimate()) return; isAnimating = true; animationFrame = window.requestAnimationFrame(frame); };
-      const stopFrame = () => { if (!isAnimating) return; window.cancelAnimationFrame(animationFrame); isAnimating = false; };
+    const loadModel = () => {
+      const loader = new GLTFLoader();
+      loader.load(modelSrc, (gltf) => {
+        const model = gltf.scene;
+        model.updateMatrixWorld(true);
 
-      const loadModel = () => {
-        const loader = new GLTFLoader();
-        loader.load(modelSrc, (gltf) => {
-          const model = gltf.scene;
-          model.updateMatrixWorld(true);
+        // Create video element
+        videoElement = document.createElement('video');
+        videoElement.src = '/assets/videos/laptop-screen.mp4#t=8';
+        videoElement.muted = true;
+        videoElement.loop = true;
+        videoElement.playsInline = true;
+        videoElement.preload = 'auto';
+        videoElement.style.display = 'none';
+        videoElement.setAttribute('playsinline', '');
+        document.body.appendChild(videoElement);
 
-          // Create video element
-          videoElement = document.createElement('video');
-          videoElement.src = '/assets/videos/pc-screen.mp4';
-          videoElement.muted = true;
-          videoElement.loop = true;
-          videoElement.playsInline = true;
-          videoElement.preload = 'auto';
-          videoElement.style.display = 'none';
-          videoElement.setAttribute('playsinline', '');
-          document.body.appendChild(videoElement);
+        // Find screen mesh (Object_123) per DEVICE_SCREEN_TEXTURE_README.md spec
+        model.traverse((object) => {
+          const mesh = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
+          if (!mesh.isMesh) return;
+          const name = object.name.toLowerCase().replace(/[\s-]+/g, '_');
+          const match = name.match(/object_(\d+)/);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (num === 123) {
+              // Screen mesh — assign shared screen material
+              mesh.material = screenMaterial;
+              mesh.castShadow = false;
+              mesh.receiveShadow = false;
+            }
+          }
+        });
 
-           // TEST 6: Object 119 (to distinguish between 119 and 121)
-           model.traverse((object) => {
-             const mesh = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
-             if (!mesh.isMesh) return;
-             const name = object.name.toLowerCase().replace(/[\s-]+/g, '_');
-             const match = name.match(/object_(\d+)/);
-             if (match) {
-               const num = parseInt(match[1], 10);
-               if (num === 119 && num % 2 === 1) {
-                 mesh.material = screenMaterial;
-                 mesh.castShadow = false;
-                 mesh.receiveShadow = false;
-               }
-             }
-           });
+        // Size and position model
+        const box = new THREE.Box3();
+        model.traverse((object) => {
+          const mesh = object as THREE.Object3D & { isMesh?: boolean };
+          if (mesh.isMesh && object.visible) box.expandByObject(object);
+        });
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        const maxAxis = Math.max(size.x, size.y, size.z);
+        const modelScale = 3.35 / Math.max(maxAxis, 1);
+        model.scale.setScalar(modelScale);
+        model.position.set(-center.x * modelScale, -center.y * modelScale, -center.z * modelScale);
+        laptopGroup.add(model);
+        laptopGroup.rotation.set(-0.15, -0.4, 0);
 
-          // Size and position model
-          const box = new THREE.Box3();
-          model.traverse((object) => {
-            const mesh = object as THREE.Object3D & { isMesh?: boolean };
-            if (mesh.isMesh && object.visible) box.expandByObject(object);
-          });
-          const size = box.getSize(new THREE.Vector3());
-          const center = box.getCenter(new THREE.Vector3());
-          const maxAxis = Math.max(size.x, size.y, size.z);
-          const modelScale = 3.35 / Math.max(maxAxis, 1);
-          model.scale.setScalar(modelScale);
-          model.position.set(-center.x * modelScale, -center.y * modelScale, -center.z * modelScale);
-          laptopGroup.add(model);
-          laptopGroup.rotation.set(-0.15, -0.4, 0);
+        // When video loads, set it as the map on the shared screenMaterial
+        videoElement.addEventListener('loadeddata', () => {
+          videoTexture = new THREE.VideoTexture(videoElement!);
+          videoTexture.colorSpace = THREE.SRGBColorSpace;
+          videoTexture.flipY = false;
+          videoTexture.minFilter = THREE.LinearFilter;
+          videoTexture.magFilter = THREE.LinearFilter;
+          videoTexture.generateMipmaps = false;
+          videoTexture.wrapT = THREE.RepeatWrapping;
+          videoTexture.repeat.y = -1;
+          videoTexture.offset.y = 1;
+          videoTexture.rotation = 0;
 
-          // When video loads, set it as the map on the shared screenMaterial
-          videoElement.addEventListener('loadeddata', () => {
-            videoTexture = new THREE.VideoTexture(videoElement!);
-            videoTexture.colorSpace = THREE.SRGBColorSpace;
-            videoTexture.flipY = false;
-            videoTexture.minFilter = THREE.LinearFilter;
-            videoTexture.magFilter = THREE.LinearFilter;
-            videoTexture.generateMipmaps = false;
-            videoTexture.wrapS = THREE.RepeatWrapping;
-            videoTexture.wrapT = THREE.RepeatWrapping;
-            videoTexture.repeat.set(1, -1);
-            videoTexture.offset.set(0, 1);
-            videoTexture.rotation = 0;
+          // Since all textured meshes SHARE screenMaterial, one update affects all
+          screenMaterial.map?.dispose();
+          screenMaterial.map = videoTexture;
+          screenMaterial.needsUpdate = true;
 
-            // Since all textured meshes SHARE screenMaterial, this one update affects all
-            screenMaterial.map?.dispose();
-            screenMaterial.map = videoTexture;
-            screenMaterial.needsUpdate = true;
+          if (shouldAnimate()) void videoElement!.play().catch(() => undefined);
+        }, { once: true });
 
-            if (shouldAnimate()) void videoElement!.play().catch(() => undefined);
-          }, { once: true });
+        videoElement.load();
+        root.classList.add('is-loaded');
+        resize();
+        startFrame();
+      }, undefined, () => { root.classList.add('has-failed'); });
+    };
 
-          videoElement.load();
-          root.classList.add('is-loaded');
-          resize();
-          startFrame();
-        }, undefined, () => { root.classList.add('has-failed'); });
-      };
+    const loadObserver = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { loadModel(); loadObserver.disconnect(); }
+    }, { rootMargin: '50px' });
+    loadObserver.observe(root);
 
-      const loadObserver = new IntersectionObserver(([entry]) => {
-        if (entry.isIntersecting) { loadModel(); loadObserver.disconnect(); }
-      }, { rootMargin: '50px' });
-      loadObserver.observe(root);
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(root);
 
-      const resizeObserver = new ResizeObserver(resize);
-      resizeObserver.observe(root);
-
-      root.addEventListener('pointermove', (event) => {
-        const rect = root.getBoundingClientRect();
-        pointerX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
-        pointerY = -(((event.clientY - rect.top) / rect.height - 0.5) * 2);
-      });
-      root.addEventListener('pointerleave', () => { pointerX = 0; pointerY = 0; });
-
-      const visibilityObserver = new IntersectionObserver(([entry]) => {
-        isSceneVisible = entry.isIntersecting;
-        if (shouldAnimate()) { startFrame(); if (videoTexture && videoElement) void videoElement.play().catch(() => undefined); }
-        else { stopFrame(); videoElement?.pause(); }
-      }, { threshold: 0.05 });
-      visibilityObserver.observe(root);
-
-      document.addEventListener('visibilitychange', () => {
-        isPageVisible = !document.hidden;
-        if (shouldAnimate()) { startFrame(); if (videoTexture && videoElement) void videoElement.play().catch(() => undefined); }
-        else { stopFrame(); videoElement?.pause(); }
-      });
-
-      document.addEventListener('astro:before-swap', () => {
-        stopFrame();
-        resizeObserver.disconnect();
-        visibilityObserver.disconnect();
-        videoElement?.pause();
-        videoTexture?.dispose();
-        environmentMap.dispose();
-        renderer.dispose();
-      }, { once: true });
+    root.addEventListener('pointermove', (event) => {
+      const rect = root.getBoundingClientRect();
+      pointerX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+      pointerY = -(((event.clientY - rect.top) / rect.height - 0.5) * 2);
     });
+    root.addEventListener('pointerleave', () => { pointerX = 0; pointerY = 0; });
+
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      isSceneVisible = entry.isIntersecting;
+      if (shouldAnimate()) { startFrame(); if (videoTexture && videoElement) void videoElement.play().catch(() => undefined); }
+      else { stopFrame(); videoElement?.pause(); }
+    }, { threshold: 0.05 });
+    visibilityObserver.observe(root);
+
+    document.addEventListener('visibilitychange', () => {
+      isPageVisible = !document.hidden;
+      if (shouldAnimate()) { startFrame(); if (videoTexture && videoElement) void videoElement.play().catch(() => undefined); }
+      else { stopFrame(); videoElement?.pause(); }
+    });
+
+    document.addEventListener('astro:before-swap', () => {
+      stopFrame();
+      resizeObserver.disconnect();
+      visibilityObserver.disconnect();
+      videoElement?.pause();
+      videoTexture?.dispose();
+      environmentMap.dispose();
+      renderer.dispose();
+    }, { once: true });
   });
 </script>
 
