@@ -8,7 +8,7 @@ const canonical = 'https://yourdomain.com';
   <!-- ==================== HERO ==================== -->
   <section id="hero" class="showcase-hero pb-10 pt-6 sm:pb-16 sm:pt-10">
     <div class="grid gap-6 sm:gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-      <div class="hero-copy">
+      <div class="hero-copy startup-enter">
         <p class="text-xs font-mono uppercase tracking-widest text-accent">[01 / DIGITAL STUDIO]</p>
         <h1 class="mt-4 sm:mt-5 max-w-3xl text-3xl font-semibold tracking-tight leading-[1.06] text-white sm:text-5xl lg:text-5xl xl:text-[4.35rem]">
           We build premium digital experiences that make your brand impossible to ignore.
@@ -45,7 +45,7 @@ const canonical = 'https://yourdomain.com';
         </div>
       </div>
 
-      <div class="hero-visual" aria-label="Interactive 3D mobile website preview">
+      <div class="hero-visual startup-enter" aria-label="Interactive 3D mobile website preview">
         <div class="iphone-scene" data-iphone-scene data-model-src="/assets/models/iphone.gltf">
           <canvas aria-hidden="true"></canvas>
           <div class="iphone-fallback">
@@ -65,7 +65,7 @@ const canonical = 'https://yourdomain.com';
   </section>
 
   <!-- ==================== POSITIONING / APPROACH ==================== -->
-  <section id="work" class="space-y-8 sm:space-y-12 pb-16 sm:pb-20">
+  <section id="work" class="space-y-8 sm:space-y-12 pb-16 sm:pb-20 reveal">
     <div class="grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
       <div class="space-y-3 sm:space-y-4">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[02 / OUR APPROACH]</p>
@@ -94,7 +94,7 @@ const canonical = 'https://yourdomain.com';
   </section>
 
   <!-- ==================== PORTFOLIO / CASE STUDIES ==================== -->
-  <section class="space-y-8 sm:space-y-10 pb-16 sm:pb-20">
+  <section class="space-y-8 sm:space-y-10 pb-16 sm:pb-20 reveal">
     <div class="grid gap-6 lg:grid-cols-[0.9fr_1fr] lg:items-end">
       <div class="space-y-3 sm:space-y-4">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[03 / OUR PRODUCTIONS]</p>
@@ -179,7 +179,7 @@ const canonical = 'https://yourdomain.com';
   </section>
 
   <!-- ==================== SERVICES - 3 TIERS ==================== -->
-  <section id="services" class="space-y-10 pb-20">
+  <section id="services" class="space-y-10 pb-20 reveal">
     <div class="grid gap-6 lg:grid-cols-[0.9fr_1fr] lg:items-end">
       <div class="space-y-4">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[04 / OUR SERVICES]</p>
@@ -188,7 +188,7 @@ const canonical = 'https://yourdomain.com';
       <p class="max-w-3xl text-base leading-8 text-zinc-400">Every engagement includes our full strategic process: discovery, design direction, responsive development, performance engineering, and a clean launch handoff. Choose the tier that matches your ambition.</p>
     </div>
 
-    <div class="grid gap-6 lg:grid-cols-3">
+    <div class="grid gap-6 lg:grid-cols-3 reveal-stagger">
       <!-- TIER 1 -->
       <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-8 transition-all duration-300 hover:border-zinc-700/80 group">
         <div class="flex items-center justify-between">
@@ -300,12 +300,12 @@ const canonical = 'https://yourdomain.com';
   </section>
 
   <!-- ==================== PROCESS ==================== -->
-  <section id="process" class="space-y-8 pb-20">
+  <section id="process" class="space-y-8 pb-20 reveal">
     <div class="space-y-4">
       <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[05 / OUR PROCESS]</p>
       <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">A straightforward process with no surprises.</h2>
     </div>
-    <div class="grid gap-4 sm:gap-6 md:grid-cols-4">
+    <div class="grid gap-4 sm:gap-6 md:grid-cols-4 reveal-stagger">
       <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-5 sm:p-6 transition-all duration-300 hover:border-zinc-700/80">
         <p class="text-xs font-mono uppercase tracking-widest text-accent">01</p>
         <h3 class="mt-4 text-lg font-semibold text-white">Discover</h3>
@@ -330,7 +330,7 @@ const canonical = 'https://yourdomain.com';
   </section>
 
   <!-- ==================== CONTACT ==================== -->
-  <section id="contact" class="pb-20">
+  <section id="contact" class="pb-20 reveal">
     <div class="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
       <div class="space-y-4">
         <p class="text-xs font-mono uppercase tracking-widest text-zinc-500">[06 / START A PROJECT]</p>
@@ -384,6 +384,24 @@ const canonical = 'https://yourdomain.com';
 </Layout>
 
 <script>
+  // Lightweight scroll reveal using IntersectionObserver
+  (function() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal, .reveal-fade, .reveal-stagger').forEach(el => {
+      observer.observe(el);
+    });
+  })();
+
   import * as THREE from 'three';
   import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
