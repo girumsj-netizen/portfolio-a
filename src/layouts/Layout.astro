@@ -2,14 +2,14 @@
 import '../styles/global.css';
 
 const {
-  title = 'Fast Portfolio Websites for Growing Brands',
-  description = 'Clear fast websites for business owners who want more trust and better leads.',
+  title = 'Premium Digital Studio — Websites, UI, and Brand Experiences',
+  description = 'We craft high-performance websites, complex UI interactions, and bespoke digital experiences for modern brands.',
   canonical = 'https://yourdomain.com'
 } = Astro.props;
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Premium Web Architecture',
+  name: 'Nova Studio',
   url: canonical,
   logo: 'https://yourdomain.com/logo.svg',
   sameAs: ['https://www.linkedin.com/in/yourprofile'],
@@ -64,13 +64,14 @@ const organizationSchema = {
       <header class="fixed inset-x-0 top-6 z-50 flex justify-center px-4">
         <nav class="w-full max-w-6xl bg-zinc-950/50 backdrop-blur-xl border border-zinc-800/40 rounded-full px-6 py-3 shadow-soft">
           <div class="flex flex-col gap-3 text-sm text-zinc-300 sm:flex-row sm:items-center sm:justify-between">
-            <a class="font-semibold uppercase tracking-[0.28em] text-zinc-300" href="#hero">ARCHITECTURE</a>
+            <a class="font-semibold uppercase tracking-[0.28em] text-zinc-300" href="#hero">NOVA STUDIO</a>
             <div class="flex flex-wrap items-center gap-4 text-zinc-400">
               <a class="transition-all duration-300 ease-out hover:text-white" href="#work">Work</a>
               <a class="transition-all duration-300 ease-out hover:text-white" href="#services">Services</a>
-              <a class="transition-all duration-300 ease-out hover:text-white" href="#audit">Audit</a>
+              <a class="transition-all duration-300 ease-out hover:text-white" href="#process">Process</a>
+              <a class="transition-all duration-300 ease-out hover:text-white" href="#contact">Contact</a>
             </div>
-            <a class="inline-flex items-center justify-center rounded-full border border-accent/30 bg-accent/10 px-4 py-2 text-xs uppercase tracking-[0.32em] text-accent transition-all duration-300 hover:bg-accent/15 hover:text-white" href="#audit">Free Audit</a>
+            <a class="inline-flex items-center justify-center rounded-full bg-accent px-5 py-2 text-xs uppercase tracking-[0.32em] font-semibold text-black transition-all duration-300 ease-out hover:shadow-[0_0_40px_rgba(0,179,126,0.28)]" href="#contact">Start a Project</a>
           </div>
         </nav>
       </header>
@@ -83,7 +84,7 @@ const organizationSchema = {
 
       <footer class="digital-footer border-t border-zinc-800/60 bg-[#09090b]/90 py-8">
         <div class="mx-auto max-w-6xl px-4 sm:px-6">
-          <p class="text-sm text-zinc-500">&copy; {new Date().getFullYear()} Premium Web Architecture. Built for speed and trust and business growth.</p>
+          <p class="text-sm text-zinc-500">&copy; {new Date().getFullYear()} Nova Studio. We craft digital experiences that elevate brands and drive results.</p>
         </div>
       </footer>
     </div>
