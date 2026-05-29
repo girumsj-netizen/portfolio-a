@@ -9,25 +9,24 @@ const {
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Nova Studio',
+  name: 'Polaris Studios',
   url: canonical,
   logo: 'https://yourdomain.com/logo.svg',
   sameAs: ['https://www.linkedin.com/in/yourprofile'],
   contactPoint: [{
     '@type': 'ContactPoint',
     contactType: 'business',
-    email: 'hello@yourdomain.com'
+    email: 'hello@polarisstudios.com'
   }]
 };
 ---
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#09090b" />
-    <meta name="color-scheme" content="dark" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>{title}</title>
     <link rel="canonical" href={canonical} />
@@ -38,6 +37,19 @@ const organizationSchema = {
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content="/og-image.svg" />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script is:inline>
+      (function() {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+          document.documentElement.classList.remove('light');
+          document.documentElement.classList.add('dark');
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#09090b');
+        } else {
+          document.documentElement.classList.add('light');
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#ffffff');
+        }
+      })();
+    </script>
   </head>
   <body class="min-h-screen bg-[#09090b] text-zinc-100 selection:bg-accent/30 antialiased">
     <div class="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(0,179,126,0.10),_transparent_28%)] bg-grid">
@@ -61,32 +73,183 @@ const organizationSchema = {
         <span class="particle-dense" style="--x: 82%; --y: 88%; --d: 3.8s; --s: 1.15; --t: 8.8s; --dx: 22px; --dy: -54px;"></span>
         <span class="particle-dense" style="--x: 93%; --y: 82%; --d: 1.1s; --s: 0.9; --t: 6.9s; --dx: -30px; --dy: -46px;"></span>
       </div>
-      <header class="fixed inset-x-0 top-6 z-50 flex justify-center px-4">
-        <nav class="w-full max-w-6xl bg-zinc-950/50 backdrop-blur-xl border border-zinc-800/40 rounded-full px-6 py-3 shadow-soft">
-          <div class="flex flex-col gap-3 text-sm text-zinc-300 sm:flex-row sm:items-center sm:justify-between">
-            <a class="font-semibold uppercase tracking-[0.28em] text-zinc-300" href="#hero">NOVA STUDIO</a>
-            <div class="flex flex-wrap items-center gap-4 text-zinc-400">
-              <a class="transition-all duration-300 ease-out hover:text-white" href="#work">Work</a>
-              <a class="transition-all duration-300 ease-out hover:text-white" href="#services">Services</a>
-              <a class="transition-all duration-300 ease-out hover:text-white" href="#process">Process</a>
-              <a class="transition-all duration-300 ease-out hover:text-white" href="#contact">Contact</a>
+      <header class="fixed inset-x-0 top-4 sm:top-6 z-50 flex justify-center px-4">
+        <nav class="w-full max-w-6xl bg-zinc-950/50 backdrop-blur-xl border border-zinc-800/40 rounded-full px-5 sm:px-6 py-3 shadow-soft" style="background: var(--nav-bg); border-color: var(--nav-border);">
+          <div class="flex items-center justify-between text-sm text-zinc-300" style="color: var(--text-secondary);">
+<a class="font-semibold uppercase tracking-[0.28em]" href="#hero" style="color: var(--text-primary);">POLARIS STUDIOS</a>
+
+            <!-- Tab navigation — merged into navbar -->
+            <div class="hidden sm:flex items-center gap-1" style="color: var(--text-muted);">
+              <button data-tab="studio" class="tab-btn active px-3 lg:px-4 py-1.5 rounded-xl text-xs font-medium transition-all duration-300 text-zinc-400 hover:text-white data-[active=true]:bg-accent/10 data-[active=true]:text-accent">Studio</button>
+              <button data-tab="work" class="tab-btn px-3 lg:px-4 py-1.5 rounded-xl text-xs font-medium transition-all duration-300 text-zinc-400 hover:text-white data-[active=true]:bg-accent/10 data-[active=true]:text-accent">Work</button>
+              <button data-tab="services" class="tab-btn px-3 lg:px-4 py-1.5 rounded-xl text-xs font-medium transition-all duration-300 text-zinc-400 hover:text-white data-[active=true]:bg-accent/10 data-[active=true]:text-accent">Services</button>
+              <button data-tab="contact" class="tab-btn px-3 lg:px-4 py-1.5 rounded-xl text-xs font-medium transition-all duration-300 text-zinc-400 hover:text-white data-[active=true]:bg-accent/10 data-[active=true]:text-accent">Contact</button>
             </div>
-            <a class="inline-flex items-center justify-center rounded-full bg-accent px-5 py-2 text-xs uppercase tracking-[0.32em] font-semibold text-black transition-all duration-300 ease-out hover:shadow-[0_0_40px_rgba(0,179,126,0.28)]" href="#contact">Start a Project</a>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+              <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <span class="icon-wrapper">
+                  <span class="sun-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="5"/>
+                      <line x1="12" y1="1" x2="12" y2="3"/>
+                      <line x1="12" y1="21" x2="12" y2="23"/>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                      <line x1="1" y1="12" x2="3" y2="12"/>
+                      <line x1="21" y1="12" x2="23" y2="12"/>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                  </span>
+                  <span class="moon-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                  </span>
+                </span>
+              </button>
+
+              <!-- Desktop CTA -->
+              <button data-tab-target="contact" class="hidden sm:inline-flex items-center justify-center rounded-full bg-accent px-5 py-2 text-xs uppercase tracking-[0.32em] font-semibold text-black transition-all duration-300 ease-out hover:shadow-[0_0_40px_rgba(0,179,126,0.28)]">Start a Project</button>
+
+              <!-- Hamburger button (mobile only) -->
+              <button id="mobile-menu-btn" class="sm:hidden relative z-50 flex h-9 w-9 items-center justify-center rounded-full border border-zinc-700/60 bg-zinc-800/20 transition-all duration-300" aria-label="Toggle menu">
+                <span class="hamburger-lines relative block w-4">
+                  <span class="ham-line top-line absolute left-0 block h-[1.5px] w-full rounded-full bg-zinc-300 transition-all duration-300"></span>
+                  <span class="ham-line mid-line absolute left-0 block h-[1.5px] w-full rounded-full bg-zinc-300 transition-all duration-300"></span>
+                  <span class="ham-line bot-line absolute left-0 block h-[1.5px] w-full rounded-full bg-zinc-300 transition-all duration-300"></span>
+                </span>
+              </button>
+            </div>
           </div>
         </nav>
       </header>
 
-      <main class="relative pt-28">
+      <!-- Mobile menu overlay -->
+      <div id="mobile-menu-overlay" class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 sm:hidden"></div>
+      <div id="mobile-menu-panel" class="fixed top-0 right-0 z-40 h-full w-[280px] max-w-[85vw] bg-zinc-950/95 backdrop-blur-xl border-l border-zinc-800/40 shadow-2xl translate-x-full transition-transform duration-300 ease-out sm:hidden" style="background: var(--nav-bg);">
+        <div class="flex flex-col gap-6 px-6 pt-28 pb-8">
+          <a class="mobile-nav-link text-lg font-medium text-zinc-300 transition-all duration-300 hover:text-white cursor-pointer" data-tab-target="studio" style="color: var(--text-muted);">Studio</a>
+          <a class="mobile-nav-link text-lg font-medium text-zinc-300 transition-all duration-300 hover:text-white cursor-pointer" data-tab-target="work" style="color: var(--text-muted);">Work</a>
+          <a class="mobile-nav-link text-lg font-medium text-zinc-300 transition-all duration-300 hover:text-white cursor-pointer" data-tab-target="services" style="color: var(--text-muted);">Services</a>
+          <a class="mobile-nav-link text-lg font-medium text-zinc-300 transition-all duration-300 hover:text-white cursor-pointer" data-tab-target="contact" style="color: var(--text-muted);">Contact</a>
+          <div class="mt-4 pt-6 border-t border-zinc-800/40">
+            <a class="inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-semibold text-black transition-all duration-300 ease-out hover:shadow-[0_0_40px_rgba(0,179,126,0.2)] cursor-pointer" data-tab-target="contact">Start a Project</a>
+          </div>
+        </div>
+      </div>
+
+      <main class="relative pt-24 sm:pt-28">
         <div class="mx-auto w-full max-w-7xl px-4 sm:px-6">
           <slot />
         </div>
       </main>
 
-      <footer class="digital-footer border-t border-zinc-800/60 bg-[#09090b]/90 py-8">
-        <div class="mx-auto max-w-6xl px-4 sm:px-6">
-          <p class="text-sm text-zinc-500">&copy; {new Date().getFullYear()} Nova Studio. We craft digital experiences that elevate brands and drive results.</p>
+      <footer class="relative" style="border-top: 1px solid var(--nav-border); background: var(--footer-bg); overflow: hidden;">
+        <!-- Gradient fade at the TOP — masks text emerging from above -->
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-20 sm:h-32 z-20" aria-hidden="true" style="background: linear-gradient(to bottom, var(--footer-bg) 0%, transparent 100%);"></div>
+        <!-- Huge watermark text — edge-to-edge, positioned low -->
+        <div class="footer-watermark pointer-events-none select-none relative z-10 flex items-end" aria-hidden="true">
+<p class="font-bold leading-none tracking-tighter whitespace-nowrap" style="font-size: clamp(4rem, 13vw, 11rem); line-height: 0.85; background: linear-gradient(180deg, rgba(0, 179, 126, 0.30), rgba(0, 179, 126, 0.10)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-family: Inter, ui-sans-serif, system-ui, sans-serif; margin: 0; padding: 0; width: 100%; text-align: center; letter-spacing: -0.04em; transform: translateY(60px); transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s ease; opacity: 0;">Polaris Studios</p>
+        </div>
+        <!-- Footer info row -->
+        <div class="relative z-20 mx-auto max-w-7xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-8 pt-4 pb-5">
+          <p class="text-xs sm:text-sm" style="color: var(--text-dim);">&copy; {new Date().getFullYear()} Polaris Studios</p>
+          <div class="flex items-center gap-6">
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm font-medium transition-colors duration-300 hover:opacity-80" style="color: var(--text-dim);">LinkedIn</a>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm font-medium transition-colors duration-300 hover:opacity-80" style="color: var(--text-dim);">X - formerly Twitter</a>
+          </div>
         </div>
       </footer>
+      <!-- Script to animate watermark on scroll -->
+      <script>
+        (function() {
+          const wm = document.querySelector('.footer-watermark p');
+          if (!wm) return;
+          const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+              wm.style.transform = 'translateY(0)';
+              wm.style.opacity = '1';
+            } else {
+              wm.style.transform = 'translateY(100%)';
+              wm.style.opacity = '0';
+            }
+          }, { threshold: 0.1 });
+          observer.observe(wm.closest('footer'));
+        })();
+      </script>
     </div>
+    <script>
+      (function() {
+        const toggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
+        if (toggle) {
+          toggle.addEventListener('click', () => {
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+              html.classList.remove('dark');
+              html.classList.add('light');
+              localStorage.setItem('theme', 'light');
+              if (themeColorMeta) themeColorMeta.setAttribute('content', '#ffffff');
+            } else {
+              html.classList.remove('light');
+              html.classList.add('dark');
+              localStorage.setItem('theme', 'dark');
+              if (themeColorMeta) themeColorMeta.setAttribute('content', '#09090b');
+            }
+          });
+        }
+
+        // Mobile hamburger menu
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const overlay = document.getElementById('mobile-menu-overlay');
+        const panel = document.getElementById('mobile-menu-panel');
+        const navLinks = document.querySelectorAll('.mobile-nav-link');
+        const hamLines = document.querySelectorAll('.ham-line');
+
+        if (menuBtn && overlay && panel) {
+          const openMenu = () => {
+            panel.classList.remove('translate-x-full');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100', 'pointer-events-auto');
+            document.body.style.overflow = 'hidden';
+            // Animate hamburger to X
+            hamLines.forEach((line, i) => {
+              if (i === 0) { line.style.top = '0'; line.style.transform = 'rotate(45deg)'; }
+              if (i === 1) { line.style.opacity = '0'; }
+              if (i === 2) { line.style.top = '0'; line.style.transform = 'rotate(-45deg)'; }
+            });
+          };
+
+          const closeMenu = () => {
+            panel.classList.add('translate-x-full');
+            overlay.classList.remove('opacity-100', 'pointer-events-auto');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            document.body.style.overflow = '';
+            // Reset hamburger
+            hamLines.forEach((line, i) => {
+              line.style.transform = '';
+              line.style.opacity = '';
+              line.style.top = '';
+            });
+          };
+
+          menuBtn.addEventListener('click', () => {
+            if (panel.classList.contains('translate-x-full')) {
+              openMenu();
+            } else {
+              closeMenu();
+            }
+          });
+
+          overlay.addEventListener('click', closeMenu);
+          navLinks.forEach(link => link.addEventListener('click', closeMenu));
+        }
+      })();
+    </script>
   </body>
 </html>
