@@ -17,7 +17,7 @@ const canonical = 'https://yourdomain.com';
       <section class="showcase-hero">
         <div class="grid gap-6 sm:gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div class="hero-copy">
-            <p class="text-[11px] sm:text-xs font-mono uppercase tracking-widest text-accent">[01 / CREATIVE AGENCY]</p>
+            <p class="text-[11px] sm:text-xs font-mono uppercase tracking-widest text-accent">[ / CREATIVE AGENCY]</p>
             <h1 class="mt-5 sm:mt-8 max-w-3xl text-2xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.08] text-white">
               We build stunning websites, design professional logos, and develop custom software apps for your business.
             </h1>
@@ -134,6 +134,9 @@ const canonical = 'https://yourdomain.com';
         <button data-subtab="branding" class="work-subtab-btn px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-zinc-800/30 text-zinc-400 hover:text-white border border-zinc-800/40 data-[active=true]:bg-accent/10 data-[active=true]:text-accent data-[active=true]:border-accent/30">
           Branding
         </button>
+        <button data-subtab="apps" class="work-subtab-btn px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-zinc-800/30 text-zinc-400 hover:text-white border border-zinc-800/40 data-[active=true]:bg-accent/10 data-[active=true]:text-accent data-[active=true]:border-accent/30">
+          Apps
+        </button>
       </div>
 
       <!-- Websites sub-panel -->
@@ -221,6 +224,22 @@ const canonical = 'https://yourdomain.com';
           </article>
           <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-5 sm:p-6 transition-all duration-300 hover:border-zinc-700/80">
             <div class="aspect-square rounded-xl bg-[#0b0b0e] flex items-center justify-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 0 200 40" fill="none" class="h-11 w-auto">
+                <rect width="40" height="40" rx="8" fill="#2563EB"/>
+                <g transform="translate(8, 4) scale(1.333)">
+                  <g transform="translate(-2.8, 0)">
+                    <circle cx="12" cy="8" r="6" fill="none" stroke="white" stroke-width="1.5"/>
+                    <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </g>
+                </g>
+                <text x="52" y="26" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="bold" fill="#111827">CertPlatform</text>
+              </svg>
+            </div>
+            <h4 class="text-sm font-semibold text-white">CertPlatform Logo</h4>
+            <p class="mt-2 text-xs text-zinc-400">A clean, simple shield mark with a minimal figure — designed for instant recognition across digital and print.</p>
+          </article>
+          <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-5 sm:p-6 transition-all duration-300 hover:border-zinc-700/80">
+            <div class="aspect-square rounded-xl bg-[#0b0b0e] flex items-center justify-center mb-4">
               <div class="grid grid-cols-2 gap-1">
                 <span class="w-5 h-5 rounded bg-zinc-700"></span>
                 <span class="w-5 h-5 rounded bg-zinc-700"></span>
@@ -232,6 +251,46 @@ const canonical = 'https://yourdomain.com';
             <p class="mt-2 text-xs text-zinc-400">Stationery, packaging, brochures, and full corporate identity layouts.</p>
           </article>
         </div>
+      </div>
+
+      <!-- Apps sub-panel -->
+      <div id="work-apps" class="work-subpanel space-y-8 hidden">
+        <!-- CertPlatform project -->
+        <article class="rounded-2xl bg-[#141417] border border-zinc-800/60 p-5 sm:p-8 transition-all duration-300 hover:border-zinc-700/80">
+          <p class="text-xs font-mono uppercase tracking-widest text-accent">Certificate Management Platform</p>
+          <h3 class="mt-3 sm:mt-4 text-xl sm:text-2xl font-semibold tracking-tight text-white">CertPlatform — web app for generating professional certificates.</h3>
+          <div class="mt-4 sm:mt-6 grid gap-4 text-zinc-400 sm:grid-cols-3">
+            <div>
+              <p class="font-semibold text-white">Our goal</p>
+              <p class="mt-2 text-sm sm:text-base">Build a streamlined platform that enables organizations to design, manage, and distribute certificates for trainees and clients with minimal effort.</p>
+            </div>
+            <div>
+              <p class="font-semibold text-white">Our solution</p>
+              <p class="mt-2 text-sm sm:text-base">We developed a full-featured web application with custom template creation, bulk certificate generation, and an analytics dashboard to track issuance data at a glance.</p>
+            </div>
+            <div>
+              <p class="font-semibold text-white">Result</p>
+              <p class="mt-2 text-sm sm:text-base">A fast, intuitive tool that eliminates manual certificate workflows — letting teams produce branded certificates in bulk with just a few clicks.</p>
+            </div>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="rounded-full border border-zinc-700/60 bg-zinc-800/20 px-3 py-1 text-xs text-zinc-400">Web Application</span>
+            <span class="rounded-full border border-zinc-700/60 bg-zinc-800/20 px-3 py-1 text-xs text-zinc-400">Template Engine</span>
+            <span class="rounded-full border border-zinc-700/60 bg-zinc-800/20 px-3 py-1 text-xs text-zinc-400">Analytics</span>
+            <span class="rounded-full border border-zinc-700/60 bg-zinc-800/20 px-3 py-1 text-xs text-zinc-400">Bulk Generation</span>
+          </div>
+          <figure class="mt-6 sm:mt-8">
+            <div class="relative mx-auto max-w-3xl overflow-hidden rounded-xl border border-zinc-800/60 bg-[#0b0b0e] shadow-[0_32px_80px_rgba(0,0,0,0.5)]">
+              <div class="flex items-center gap-2 border-b border-zinc-800/60 bg-[#141417] px-4 py-2.5">
+                <span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span>
+                <span class="ml-3 text-[10px] text-zinc-500">CertPlatform</span>
+              </div>
+              <img src="/assets/App%20pictures/Screenshot%202026-05-30%20224212.png" alt="CertPlatform dashboard" class="h-full w-full object-cover" loading="lazy" decoding="async" />
+            </div>
+          </figure>
+        </article>
       </div>
     </div>
 
@@ -425,7 +484,7 @@ const canonical = 'https://yourdomain.com';
               <label class="block text-sm font-semibold tracking-tight text-zinc-100">Company or project name<input type="text" name="project" required class="mt-3 w-full rounded-3xl border border-zinc-800/60 bg-[#0d0d11] px-5 py-4 text-sm text-zinc-100 outline-none transition-all duration-300 focus:border-accent/70 focus:ring-2 focus:ring-accent/10" /></label>
               <label class="block text-sm font-semibold tracking-tight text-zinc-100">Tell us about your project<textarea name="brief" rows="5" required placeholder="What are you looking to build? What are your goals and timeline?" class="mt-3 w-full rounded-3xl border border-zinc-800/60 bg-[#0d0d11] px-5 py-4 text-sm text-zinc-100 outline-none transition-all duration-300 focus:border-accent/70 focus:ring-2 focus:ring-accent/10"></textarea></label>
               <div class="grid gap-3 sm:grid-cols-2">
-                <label class="block text-sm font-semibold tracking-tight text-zinc-100">Select package<select name="package" class="mt-3 w-full rounded-3xl border border-zinc-800/60 bg-[#0d0d11] px-5 py-4 text-sm text-zinc-100 outline-none transition-all duration-300 focus:border-accent/70 focus:ring-2 focus:ring-accent/10">
+                <label class="block text-sm font-semibold tracking-tight text-zinc-100">Select package<select name="package" class="mt-3 w-full rounded-3xl border border-zinc-800/60 bg-[#0d0d11] pl-5 pr-11 py-4 text-sm text-zinc-100 outline-none transition-all duration-300 focus:border-accent/70 focus:ring-2 focus:ring-accent/10 appearance-none cursor-pointer" style="background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23a1a1aa'%3e%3cpath d='M4 6l4 4 4-4' stroke='%23a1a1aa' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e\"); background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 1rem;">
                   <option value="">Choose a package...</option>
                   <option value="simple-website">Simple Website — 20,000 ETB</option>
                   <option value="business-website">Business Website — 30,000 ETB</option>
@@ -434,12 +493,18 @@ const canonical = 'https://yourdomain.com';
                   <option value="semi-branding">Semi-Branding — 20,000 ETB</option>
                   <option value="full-branding">Full Branding — 30,000 ETB</option>
                 </select></label>
-                <label class="block text-sm font-semibold tracking-tight text-zinc-100">Preferred contact method<select name="contact-method" class="mt-3 w-full rounded-3xl border border-zinc-800/60 bg-[#0d0d11] px-5 py-4 text-sm text-zinc-100 outline-none transition-all duration-300 focus:border-accent/70 focus:ring-2 focus:ring-accent/10">
+                <label class="block text-sm font-semibold tracking-tight text-zinc-100">Preferred contact method<select name="contact-method" class="mt-3 w-full rounded-3xl border border-zinc-800/60 bg-[#0d0d11] pl-5 pr-11 py-4 text-sm text-zinc-100 outline-none transition-all duration-300 focus:border-accent/70 focus:ring-2 focus:ring-accent/10 appearance-none cursor-pointer" style="background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23a1a1aa'%3e%3cpath d='M4 6l4 4 4-4' stroke='%23a1a1aa' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e\"); background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 1rem;">
                   <option value="email">Email</option>
                   <option value="phone">Phone</option>
                   <option value="telegram">Telegram</option>
                 </select></label>
               </div>
+              <style>
+                select option { background: #141417; color: #e4e4e7; }
+                html.light select option { background: #ffffff; color: #0f172a; }
+                select option:first-of-type { color: #71717a; }
+                html.light select option:first-of-type { color: #94a3b8; }
+              </style>
               <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-4 text-base font-semibold text-black transition-all duration-300 ease-out hover:shadow-[0_0_40px_rgba(0,179,126,0.2)]">Send Project Brief</button>
             </form>
           </div>
@@ -586,7 +651,8 @@ const canonical = 'https://yourdomain.com';
       const subTabs = document.querySelectorAll('.work-subtab-btn');
       const workSubs = {
         websites: document.getElementById('work-websites'),
-        branding: document.getElementById('work-branding')
+        branding: document.getElementById('work-branding'),
+        apps: document.getElementById('work-apps')
       };
 
       subTabs.forEach(btn => {
@@ -993,6 +1059,7 @@ const canonical = 'https://yourdomain.com';
         videoElement.setAttribute('playsinline', '');
         document.body.appendChild(videoElement);
 
+        const screenImageSrc = root.dataset.screenImage;
         model.traverse((object) => {
           const mesh = object as THREE.Object3D & { isMesh?: boolean; material?: THREE.Material | THREE.Material[] };
           if (!mesh.isMesh) return;
@@ -1022,23 +1089,50 @@ const canonical = 'https://yourdomain.com';
         laptopGroup.add(model);
         laptopGroup.rotation.set(-0.15, -0.4, 0);
 
-        videoElement.addEventListener('loadeddata', () => {
-          videoTexture = new THREE.VideoTexture(videoElement!);
-          videoTexture.colorSpace = THREE.SRGBColorSpace;
-          videoTexture.flipY = false;
-          videoTexture.minFilter = THREE.LinearFilter;
-          videoTexture.magFilter = THREE.LinearFilter;
-          videoTexture.generateMipmaps = false;
-          videoTexture.wrapT = THREE.RepeatWrapping;
-          videoTexture.repeat.y = -1;
-          videoTexture.offset.y = 1;
-          videoTexture.rotation = 0;
-          screenMaterial.map?.dispose();
-          screenMaterial.map = videoTexture;
-          screenMaterial.needsUpdate = true;
-          if (shouldAnimate()) void videoElement!.play().catch(() => undefined);
-        }, { once: true });
-        videoElement.load();
+        if (screenImageSrc) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.src = screenImageSrc;
+          img.onload = () => {
+            const imageTexture = new THREE.Texture(img);
+            imageTexture.colorSpace = THREE.SRGBColorSpace;
+            imageTexture.minFilter = THREE.LinearFilter;
+            imageTexture.magFilter = THREE.LinearFilter;
+            imageTexture.generateMipmaps = false;
+            imageTexture.needsUpdate = true;
+            screenMaterial.map?.dispose();
+            screenMaterial.map = imageTexture;
+            screenMaterial.needsUpdate = true;
+          };
+        } else {
+          videoElement = document.createElement('video');
+          videoElement.src = '/assets/videos/laptop-screen.mp4#t=8';
+          videoElement.muted = true;
+          videoElement.loop = true;
+          videoElement.playsInline = true;
+          videoElement.preload = 'auto';
+          videoElement.style.display = 'none';
+          videoElement.setAttribute('playsinline', '');
+          document.body.appendChild(videoElement);
+
+          videoElement.addEventListener('loadeddata', () => {
+            videoTexture = new THREE.VideoTexture(videoElement!);
+            videoTexture.colorSpace = THREE.SRGBColorSpace;
+            videoTexture.flipY = false;
+            videoTexture.minFilter = THREE.LinearFilter;
+            videoTexture.magFilter = THREE.LinearFilter;
+            videoTexture.generateMipmaps = false;
+            videoTexture.wrapT = THREE.RepeatWrapping;
+            videoTexture.repeat.y = -1;
+            videoTexture.offset.y = 1;
+            videoTexture.rotation = 0;
+            screenMaterial.map?.dispose();
+            screenMaterial.map = videoTexture;
+            screenMaterial.needsUpdate = true;
+            if (shouldAnimate()) void videoElement!.play().catch(() => undefined);
+          }, { once: true });
+          videoElement.load();
+        }
         root.classList.add('is-loaded');
         resize();
         startFrame();
